@@ -1,0 +1,25 @@
+data:
+  store: 'yaml' # yaml, mongodb
+
+  # only fill if store=mongodb
+  mongodb:
+
+rewards:
+  command_1:
+    type: "command"
+
+    # Required Inventory Slots for claiming
+    required-space: 3
+
+    # icon
+    display:
+      material: 'oraxen:item_xyz'
+      name: '<red>Command Reward'
+      lore:
+        - '<dark_gray>??????'
+
+    # Commands to deliver to player
+    commands:
+      - 'mm i give %player% item_1'
+      - 'mm i give %player% item_2'
+      - 'mm i give %player% item_3'

@@ -1,0 +1,28 @@
+# The menu title
+title: '<s:-8><g:???>'
+
+# The range of slots to use for the reward icons
+# (both from and to are inclusive)
+list:
+  from: 0
+  to: 44
+
+# List of menu icons/buttons, you can add as many as you want
+# but there are some special ones that have actions, these are:
+#     -  previous-page
+#     -  next-page
+icons:
+  previous-page:
+    slot: 48
+    material: oraxen:arrow_left
+    name: '&7Previous Page'
+    lore:
+      - '&7Click to go to the previous page'
+      - '&7of the rewards menu'
+  next-page:
+    slot: 50
+    material: oraxen:arrow_right
+    name: '&7Next Page'
+    lore:
+      - '&7Click to go to the next page'
+      - '&7of the rewards menu'
