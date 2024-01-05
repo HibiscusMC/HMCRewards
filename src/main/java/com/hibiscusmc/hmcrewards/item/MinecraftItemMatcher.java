@@ -5,7 +5,12 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class MinecraftItemMatcher implements ItemMatcher {
+final class MinecraftItemMatcher implements ItemMatcher {
+    static final ItemMatcher INSTANCE = new MinecraftItemMatcher();
+
+    private MinecraftItemMatcher() {
+    }
+
     @Override
     public @Nullable ItemStack find(final @NotNull String id, final @NotNull ItemMatcher context) {
         final var material = Material.matchMaterial(id);

@@ -6,4 +6,12 @@ import org.jetbrains.annotations.Nullable;
 
 public interface ItemMatcher {
     @Nullable ItemStack find(final @NotNull String id, final @NotNull ItemMatcher context);
+
+    static @NotNull ItemMatcher minecraft() {
+        return MinecraftItemMatcher.INSTANCE;
+    }
+
+    static @NotNull ItemMatcher oraxen() {
+        return OraxenItemMatcher.INSTANCE;
+    }
 }

@@ -1,0 +1,22 @@
+# MiniMessage and UTF-8 supported
+command.player.offline: '<red><arg> is offline!'
+command.sender.unknown: '<red>The sender for the command is unknown!'
+command.sender.only_player: '<red>Only players can execute this command!'
+command.invalid.gamemode: '<red>The gamemode <arg> is not valid!'
+command.subcommand.invalid: '<red>The subcommand <arg> does not exist!'
+command.no_permission: '<red>No permission.'
+command.argument.no_more: '<red>No more arguments were found, size: <arg:0> position: <arg:1>'
+command.number.out_range: '<red>The number <arg:0> is not within the range min: <arg:1> max: <arg:2>'
+command.invalid.byte: '<red>The number <arg:0> is not a valid byte!'
+command.invalid.integer: '<red>The number <arg> is not a valid integer!'
+command.invalid.float: '<red>The number <arg> is not a valid float!'
+command.invalid.double: '<red>The number <arg> is not a valid double!'
+command.invalid.boolean: '<red>The string <arg> is not a valid boolean!'
+command.invalid.enum_value: '<red>The value <arg> is not valid, the valid values are: <arg:1>'
+command.invalid.long: '<red>The number <arg> is not a valid long!'
+
+
+user.not_found: '<red>Could''t find user information for <arg>'
+
+reward.invalid: '<red>Invalid reward argument: <arg> (Not found)'
+reward.queued: '<green>Queued reward for player <arg>'

@@ -2,6 +2,7 @@ package com.hibiscusmc.hmcrewards.reward.provider;
 
 import com.hibiscusmc.hmcrewards.reward.Reward;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
  * others that provide Oraxen items, and others that provide commands
  * to execute.
  */
-public interface RewardProvider {
+public interface RewardProvider<T extends Reward> {
     /**
      * Returns the reward provider identifier. This
      * could be your plugin's name.
@@ -19,6 +20,15 @@ public interface RewardProvider {
      * @return the reward provider identifier
      */
     @NotNull String id();
+
+    /**
+     * Gives the given reward to the given player.
+     *
+     * @param player the player
+     * @param reward the reward
+     * @return the result of the give operation
+     */
+    @NotNull GiveResult give(final @NotNull Player player, final @NotNull T reward);
 
     /**
      * Gets/deserializes a reward from the given
@@ -29,9 +39,17 @@ public interface RewardProvider {
      * @throws IllegalArgumentException If the configuration
      * is invalid for this reward provider type.
      */
-    @Nullable Reward deserialize(final @NotNull ConfigurationSection section) throws IllegalArgumentException;
+    @Nullable T fromConfiguration(final @NotNull ConfigurationSection section) throws IllegalArgumentException;
 
-    default @Nullable Reward deserializeFromString(final @NotNull String string) throws IllegalArgumentException {
+    default @Nullable T fromCommandLine(final @NotNull String string) throws IllegalArgumentException {
         return null;
+    }
+
+    enum GiveResult {
+        SUCCESS,
+        NO_SPACE_IN_INVENTORY,
+        INVALID_REWARD,
+        NO_PERMISSION,
+        UNKNOWN_ERROR
     }
 }

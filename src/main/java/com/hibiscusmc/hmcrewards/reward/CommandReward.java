@@ -1,4 +1,4 @@
-package com.hibiscusmc.hmcrewards.reward.command;
+package com.hibiscusmc.hmcrewards.reward;
 
 import com.hibiscusmc.hmcrewards.item.ItemDefinition;
 import com.hibiscusmc.hmcrewards.reward.Reward;
@@ -24,16 +24,12 @@ public final class CommandReward implements Reward {
         return inventorySlots;
     }
 
+    @Override
     public @NotNull ItemDefinition icon() {
         return icon;
     }
 
     public @NotNull List<String> commands() {
         return commands;
-    }
-
-    @Override
-    public @NotNull ItemStack buildIcon() {
-        return null;
     }
 }

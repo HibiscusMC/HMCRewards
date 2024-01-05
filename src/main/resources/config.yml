@@ -23,3 +23,9 @@ rewards:
       - 'mm i give %player% item_1'
       - 'mm i give %player% item_2'
       - 'mm i give %player% item_3'
+
+  item_1:
+    material: 'oraxen:item_xyz'
+    name: '<red>Item Reward'
+    lore:
+      - '<dark_gray>??????'
