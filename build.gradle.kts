@@ -8,6 +8,7 @@ repositories {
     maven("https://papermc.io/repo/repository/maven-public/")
     maven("https://repo.oraxen.com/releases") // Oraxen
     maven("https://repo.unnamed.team/repository/unnamed-public/") // command-flow
+    maven("https://repo.hibiscusmc.com/releases/") // HibiscusCommons
     mavenCentral()
 }
 
@@ -16,6 +17,7 @@ dependencies {
 
     compileOnly("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
     compileOnly("io.th0rgal:oraxen:1.164.0") // Oraxen
+    compileOnly("me.lojosho:HibiscusCommons:0.2.4") // HibiscusCommons
 
     implementation("team.unnamed:inject:2.0.1") // inject
     implementation("dev.triumphteam:triumph-gui:3.1.6") // triumph-gui
