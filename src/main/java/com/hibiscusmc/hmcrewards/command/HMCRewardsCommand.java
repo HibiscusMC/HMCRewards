@@ -1,5 +1,7 @@
 package com.hibiscusmc.hmcrewards.command;
 
+import com.hibiscusmc.hmcrewards.feedback.SoundManager;
+import com.hibiscusmc.hmcrewards.feedback.TranslationManager;
 import com.hibiscusmc.hmcrewards.reward.Reward;
 import com.hibiscusmc.hmcrewards.reward.provider.RewardProvider;
 import com.hibiscusmc.hmcrewards.user.User;
@@ -18,6 +20,8 @@ import team.unnamed.inject.Inject;
 public final class HMCRewardsCommand implements CommandClass {
     @Inject private Plugin plugin;
     @Inject private UserManager userManager;
+    @Inject private TranslationManager translationManager;
+    @Inject private SoundManager soundManager;
 
     @Command(names = "queue", permission = "hmcrewards.command.queue")
     public <T extends Reward> void queue(final @NotNull CommandSender sender, final @NotNull Player target, final @NotNull RewardProvider<T> provider, final @NotNull String arg) {
@@ -36,7 +40,11 @@ public final class HMCRewardsCommand implements CommandClass {
     }
 
     @Command(names = "reload", permission = "hmcrewards.command.reload")
-    public void reload(final @NotNull CommandSender sender) {
-
+    public void reload() {
+        final long start = System.currentTimeMillis();
+        translationManager.loadFormats();
+        soundManager.loadSounds();
+        final long took = System.currentTimeMillis() - start;
+        throw new CommandUsage(Component.translatable("reload.success", Component.text(took)));
     }
 }

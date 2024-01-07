@@ -1,8 +1,8 @@
 package com.hibiscusmc.hmcrewards.feedback;
 
+import com.hibiscusmc.hmcrewards.util.GlobalMiniMessage;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.translation.GlobalTranslator;
 import net.kyori.adventure.translation.TranslationRegistry;
@@ -133,6 +133,6 @@ final class TranslationManagerImpl implements TranslationManager {
     }
 
     private static @NotNull Component parse(final @NotNull String format, final @NotNull TagResolver @NotNull ... resolvers) {
-        return MiniMessage.miniMessage().deserialize(format, resolvers);
+        return GlobalMiniMessage.get().deserialize(format, resolvers);
     }
 }

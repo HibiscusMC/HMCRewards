@@ -20,3 +20,5 @@ user.not_found: '<red>Could''t find user information for <arg>'
 
 reward.invalid: '<red>Invalid reward argument: <arg> (Not found)'
 reward.queued: '<green>Queued reward for player <arg>'
+
+reload.success: '<green>Successfully reloaded the plugin in <dark_green><arg></dark_green> ms'
