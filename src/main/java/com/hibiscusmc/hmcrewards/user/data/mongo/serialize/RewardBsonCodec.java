@@ -1,4 +1,4 @@
-package com.hibiscusmc.hmcrewards.user.serialize;
+package com.hibiscusmc.hmcrewards.user.data.mongo.serialize;
 
 import com.hibiscusmc.hmcrewards.reward.Reward;
 import org.bson.BsonReader;

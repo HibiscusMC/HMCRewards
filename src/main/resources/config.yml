@@ -1,8 +1,10 @@
 data:
-  store: 'yaml' # yaml, mongodb
+  store: 'mongodb' # yaml, mongodb
 
   # only fill if store=mongodb
-  mongodb:
+  mongodb: # mongodb connection
+    uri: 'mongodb://localhost:27017'
+    database: 'hmcrewards'
 
 rewards:
   command_1:

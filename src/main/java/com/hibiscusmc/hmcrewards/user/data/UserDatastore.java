@@ -8,4 +8,6 @@ import java.util.UUID;
 
 public interface UserDatastore {
     @Nullable User findByUuid(final @NotNull UUID uuid);
+
+    void save(final @NotNull User user);
 }

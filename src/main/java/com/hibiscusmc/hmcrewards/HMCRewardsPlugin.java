@@ -9,12 +9,17 @@ import com.hibiscusmc.hmcrewards.util.Service;
 import me.lojosho.hibiscuscommons.HibiscusPlugin;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 import team.unnamed.inject.Binder;
 import team.unnamed.inject.Inject;
 import team.unnamed.inject.Injector;
 import team.unnamed.inject.Module;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
+import java.util.logging.Level;
 
 @SuppressWarnings("unused")
 public final class HMCRewardsPlugin extends HibiscusPlugin implements Module {
@@ -22,6 +27,8 @@ public final class HMCRewardsPlugin extends HibiscusPlugin implements Module {
     public static final String MENU_CONFIG = "menu.yml";
 
     @Inject private Set<Service> services;
+
+    private final Collection<AutoCloseable> resources = new HashSet<>();
 
     @Override
     public void onStart() {
@@ -45,6 +52,24 @@ public final class HMCRewardsPlugin extends HibiscusPlugin implements Module {
                 service.stop();
             }
         }
+
+        {
+            // close all resources registered for this plugin
+            final Iterator<AutoCloseable> iterator = resources.iterator();
+            while (iterator.hasNext()) {
+                final AutoCloseable resource = iterator.next();
+                try {
+                    resource.close();
+                } catch (final Exception exception) {
+                    getLogger().log(Level.SEVERE, "Failed to close a plugin resource", exception);
+                }
+                iterator.remove();
+            }
+        }
+    }
+
+    public void deferResourceCloseOnPluginDisable(final @NotNull AutoCloseable resource) {
+        resources.add(resource);
     }
 
     @Override
