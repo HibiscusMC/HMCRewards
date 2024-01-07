@@ -8,12 +8,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import team.unnamed.inject.Inject;
 
 import java.util.List;
 
 public final class CommandRewardProvider implements RewardProvider<CommandReward> {
+    @Inject private Plugin plugin;
+
     @Override
     public @NotNull String id() {
         return "command";
@@ -66,6 +70,16 @@ public final class CommandRewardProvider implements RewardProvider<CommandReward
 
     @Override
     public @Nullable CommandReward fromCommandLine(final @NotNull String string) throws IllegalArgumentException {
+        final ConfigurationSection section = plugin.getConfig().getConfigurationSection("rewards." + string);
+        if (section == null) {
+            return null;
+        }
 
+        if (!"command".equals(section.getString("type"))) {
+            // given a different type of reward
+            return null;
+        }
+
+        return fromConfiguration(section);
     }
 }
