@@ -14,4 +14,8 @@ public interface ItemMatcher {
     static @NotNull ItemMatcher oraxen() {
         return OraxenItemMatcher.INSTANCE;
     }
+
+    static @NotNull ItemMatcher hibiscusCommons() {
+        return HibiscusCommonsItemMatcher.INSTANCE;
+    }
 }
