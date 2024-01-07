@@ -2,8 +2,6 @@ package com.hibiscusmc.hmcrewards.reward.provider;
 
 import com.hibiscusmc.hmcrewards.item.ItemDefinition;
 import com.hibiscusmc.hmcrewards.reward.CommandReward;
-import com.hibiscusmc.hmcrewards.reward.Reward;
-import com.hibiscusmc.hmcrewards.reward.provider.RewardProvider;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;

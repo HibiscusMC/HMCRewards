@@ -23,7 +23,7 @@ public final class CommandService implements Service {
     @Inject private TranslationManager translationManager;
 
     @Override
-    public void load() {
+    public void start() {
         final CommandManager manager = new BukkitCommandManager(plugin.getName());
         manager.setTranslator(MiniMessageTranslator.miniMessage((namespace, key, resolvers) -> {
             // convert from kebab-case to snake_case and add the command prefix

@@ -1,8 +1,8 @@
 package com.hibiscusmc.hmcrewards.util;
 
 public interface Service {
-    void load();
+    void start();
 
-    default void unload() {
+    default void stop() {
     }
 }
