@@ -1,4 +1,4 @@
-package com.hibiscusmc.hmcrewards.reward.provider;
+package com.hibiscusmc.hmcrewards.reward;
 
 import com.hibiscusmc.hmcrewards.reward.Reward;
 import org.bukkit.configuration.ConfigurationSection;

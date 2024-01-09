@@ -1,6 +1,5 @@
 package com.hibiscusmc.hmcrewards.item;
 
-import com.hibiscusmc.hmcrewards.reward.provider.RewardProvider;
 import com.hibiscusmc.hmcrewards.util.GlobalMiniMessage;
 import net.kyori.adventure.text.Component;
 import org.bukkit.configuration.ConfigurationSection;

@@ -1,7 +1,6 @@
 package com.hibiscusmc.hmcrewards.reward;
 
 import com.hibiscusmc.hmcrewards.item.ItemDefinition;
-import com.hibiscusmc.hmcrewards.reward.provider.ItemRewardProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

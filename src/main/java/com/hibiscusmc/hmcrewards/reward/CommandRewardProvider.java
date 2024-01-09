@@ -1,10 +1,9 @@
-package com.hibiscusmc.hmcrewards.reward.provider;
+package com.hibiscusmc.hmcrewards.reward;
 
 import com.hibiscusmc.hmcrewards.data.serialize.DnCodec;
 import com.hibiscusmc.hmcrewards.data.serialize.DnReader;
 import com.hibiscusmc.hmcrewards.data.serialize.DnWriter;
 import com.hibiscusmc.hmcrewards.item.ItemDefinition;
-import com.hibiscusmc.hmcrewards.reward.CommandReward;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;

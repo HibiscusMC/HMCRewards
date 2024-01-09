@@ -1,4 +1,4 @@
-package com.hibiscusmc.hmcrewards.reward.provider;
+package com.hibiscusmc.hmcrewards.reward;
 
 import com.hibiscusmc.hmcrewards.data.serialize.DnCodec;
 import com.hibiscusmc.hmcrewards.data.serialize.DnReader;
@@ -6,7 +6,6 @@ import com.hibiscusmc.hmcrewards.data.serialize.DnType;
 import com.hibiscusmc.hmcrewards.data.serialize.DnWriter;
 import com.hibiscusmc.hmcrewards.item.ItemDefinition;
 import com.hibiscusmc.hmcrewards.item.ItemMatcher;
-import com.hibiscusmc.hmcrewards.reward.ItemReward;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;

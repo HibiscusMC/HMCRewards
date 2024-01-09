@@ -5,8 +5,8 @@ import com.hibiscusmc.hmcrewards.data.serialize.DnReader;
 import com.hibiscusmc.hmcrewards.data.serialize.DnType;
 import com.hibiscusmc.hmcrewards.data.serialize.DnWriter;
 import com.hibiscusmc.hmcrewards.reward.Reward;
-import com.hibiscusmc.hmcrewards.reward.provider.RewardProvider;
-import com.hibiscusmc.hmcrewards.reward.provider.RewardProviderRegistry;
+import com.hibiscusmc.hmcrewards.reward.RewardProvider;
+import com.hibiscusmc.hmcrewards.reward.RewardProviderRegistry;
 import com.hibiscusmc.hmcrewards.user.User;
 import org.jetbrains.annotations.NotNull;
 

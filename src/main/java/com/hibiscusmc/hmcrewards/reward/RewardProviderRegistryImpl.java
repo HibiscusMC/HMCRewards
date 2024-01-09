@@ -1,4 +1,4 @@
-package com.hibiscusmc.hmcrewards.reward.provider;
+package com.hibiscusmc.hmcrewards.reward;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

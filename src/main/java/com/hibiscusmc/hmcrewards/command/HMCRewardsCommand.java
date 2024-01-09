@@ -4,7 +4,7 @@ import com.hibiscusmc.hmcrewards.feedback.SoundManager;
 import com.hibiscusmc.hmcrewards.feedback.TranslationManager;
 import com.hibiscusmc.hmcrewards.menu.RewardQueueMenu;
 import com.hibiscusmc.hmcrewards.reward.Reward;
-import com.hibiscusmc.hmcrewards.reward.provider.RewardProvider;
+import com.hibiscusmc.hmcrewards.reward.RewardProvider;
 import com.hibiscusmc.hmcrewards.user.User;
 import com.hibiscusmc.hmcrewards.user.UserManager;
 import com.hibiscusmc.hmcrewards.util.ConfigurationBinder;

@@ -1,7 +1,7 @@
 package com.hibiscusmc.hmcrewards.user.data.mongo;
 
 import com.hibiscusmc.hmcrewards.data.serialize.bson.BsonCodecAdapter;
-import com.hibiscusmc.hmcrewards.reward.provider.RewardProviderRegistry;
+import com.hibiscusmc.hmcrewards.reward.RewardProviderRegistry;
 import com.hibiscusmc.hmcrewards.user.User;
 import com.hibiscusmc.hmcrewards.user.data.UserDatastore;
 import com.hibiscusmc.hmcrewards.user.data.mongo.serialize.UserCodec;

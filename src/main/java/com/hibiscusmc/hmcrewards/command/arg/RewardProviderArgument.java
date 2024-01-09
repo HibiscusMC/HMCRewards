@@ -1,7 +1,7 @@
 package com.hibiscusmc.hmcrewards.command.arg;
 
-import com.hibiscusmc.hmcrewards.reward.provider.RewardProvider;
-import com.hibiscusmc.hmcrewards.reward.provider.RewardProviderRegistry;
+import com.hibiscusmc.hmcrewards.reward.RewardProvider;
+import com.hibiscusmc.hmcrewards.reward.RewardProviderRegistry;
 import me.fixeddev.commandflow.CommandContext;
 import me.fixeddev.commandflow.annotated.part.PartFactory;
 import me.fixeddev.commandflow.exception.ArgumentParseException;

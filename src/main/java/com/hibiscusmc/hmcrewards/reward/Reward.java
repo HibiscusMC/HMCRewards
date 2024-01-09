@@ -1,9 +1,6 @@
 package com.hibiscusmc.hmcrewards.reward;
 
 import com.hibiscusmc.hmcrewards.item.ItemDefinition;
-import com.hibiscusmc.hmcrewards.reward.provider.RewardProvider;
-import com.hibiscusmc.hmcrewards.reward.provider.RewardProviderRegistry;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
