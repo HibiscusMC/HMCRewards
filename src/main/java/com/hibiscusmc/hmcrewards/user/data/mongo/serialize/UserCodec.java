@@ -85,7 +85,11 @@ public final class UserCodec implements DnCodec<User> {
         writer.writeStringValue("name", value.name());
         writer.writeArrayStart("rewards");
         for (Reward reward : value.rewards()) {
-            RewardBsonCodec.instance().encode(writer, reward, encoderContext);
+            final String reference = reward.reference();
+            if (reference == null) {
+                throw new UnsupportedOperationException("Object rewards are not supported yet.");
+            }
+            writer.writeStringValue(reference);
         }
         writer.writeArrayEnd();
         writer.writeObjectEnd();
