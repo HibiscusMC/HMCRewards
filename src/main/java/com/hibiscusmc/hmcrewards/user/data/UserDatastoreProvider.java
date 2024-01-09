@@ -37,12 +37,12 @@ public final class UserDatastoreProvider implements Provider<UserDatastore> {
                 return new MemoryUserDatastore();
             case "mongo":
             case "mongodb": {
-                final MongoClient client = MongoClients.create(requireNonNull(section.getString("uri"), "'uri' not specified for mongodb datastore."));
+                final MongoClient client = MongoClients.create(requireNonNull(section.getString("mongodb.uri"), "'uri' not specified for mongodb datastore."));
 
                 // defer client.close() to be called when the plugin is disabled
                 plugin.deferResourceCloseOnPluginDisable(client);
 
-                final MongoDatabase database = client.getDatabase(requireNonNull(section.getString("database"), "'database' not specified for mongodb datastore."));
+                final MongoDatabase database = client.getDatabase(requireNonNull(section.getString("mongodb.database"), "'database' not specified for mongodb datastore."));
                 return new MongoUserDatastore(database, rewardProviderRegistry);
             }
             default: {
