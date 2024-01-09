@@ -1,5 +1,7 @@
 package com.hibiscusmc.hmcrewards.user.data.mongo;
 
+import com.hibiscusmc.hmcrewards.data.serialize.bson.BsonCodecAdapter;
+import com.hibiscusmc.hmcrewards.reward.provider.RewardProviderRegistry;
 import com.hibiscusmc.hmcrewards.user.User;
 import com.hibiscusmc.hmcrewards.user.data.UserDatastore;
 import com.hibiscusmc.hmcrewards.user.data.mongo.serialize.UserCodec;
@@ -16,9 +18,9 @@ import java.util.UUID;
 public final class MongoUserDatastore implements UserDatastore {
     private final MongoCollection<User> collection;
 
-    public MongoUserDatastore(final @NotNull MongoDatabase database) {
+    public MongoUserDatastore(final @NotNull MongoDatabase database, final @NotNull RewardProviderRegistry rewardProviderRegistry) {
         this.collection = database.getCollection("users", User.class)
-                .withCodecRegistry(CodecRegistries.fromCodecs(new UserCodec()));
+                .withCodecRegistry(CodecRegistries.fromCodecs(new BsonCodecAdapter<>(new UserCodec(rewardProviderRegistry))));
     }
 
     @Override

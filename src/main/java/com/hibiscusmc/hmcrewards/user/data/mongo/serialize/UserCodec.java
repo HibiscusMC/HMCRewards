@@ -2,8 +2,11 @@ package com.hibiscusmc.hmcrewards.user.data.mongo.serialize;
 
 import com.hibiscusmc.hmcrewards.data.serialize.DnCodec;
 import com.hibiscusmc.hmcrewards.data.serialize.DnReader;
+import com.hibiscusmc.hmcrewards.data.serialize.DnType;
 import com.hibiscusmc.hmcrewards.data.serialize.DnWriter;
 import com.hibiscusmc.hmcrewards.reward.Reward;
+import com.hibiscusmc.hmcrewards.reward.provider.RewardProvider;
+import com.hibiscusmc.hmcrewards.reward.provider.RewardProviderRegistry;
 import com.hibiscusmc.hmcrewards.user.User;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,7 +14,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static java.util.Objects.requireNonNull;
+
 public final class UserCodec implements DnCodec<User> {
+    private final RewardProviderRegistry rewardProviderRegistry;
+
+    public UserCodec(final @NotNull RewardProviderRegistry rewardProviderRegistry) {
+        this.rewardProviderRegistry = requireNonNull(rewardProviderRegistry, "rewardProviderRegistry");
+    }
+
     @Override
     public @NotNull Class<User> type() {
         return User.class;
@@ -35,7 +46,23 @@ public final class UserCodec implements DnCodec<User> {
                 rewards = new ArrayList<>();
                 reader.readArrayStart();
                 while (reader.hasMoreValuesOrEntries()) {
-                    rewards.add(RewardBsonCodec.instance().decode(reader, decoderContext));
+                    if (reader.readType() == DnType.VALUE) {
+                        // id-only
+                        final String id = reader.readStringValue();
+                        Reward reward = null;
+                        for (final RewardProvider<?> provider : rewardProviderRegistry.providers()) {
+                            if ((reward = provider.fromReference(id)) != null) {
+                                break;
+                            }
+                        }
+                        if (reward == null) {
+                            throw new IllegalStateException("Unknown reward reference '" + id + "'.");
+                        }
+                        rewards.add(reward);
+                    } else {
+                        // object
+                        throw new IllegalStateException("Object rewards are not supported yet.");
+                    }
                 }
                 reader.readArrayEnd();
             } else {

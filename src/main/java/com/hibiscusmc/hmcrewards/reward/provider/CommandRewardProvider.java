@@ -125,10 +125,11 @@ public final class CommandRewardProvider implements RewardProvider<CommandReward
                 reader.skipValue();
             }
         }
-        if (command == null) {
-            throw new IllegalArgumentException("CommandReward does not contain a command");
-        }
+        //if (command == null) {
+//            throw new IllegalArgumentException("CommandReward does not contain a command");
+        // }
         reader.readObjectEnd();
-        return new CommandReward(null, inventorySlots, icon, commands);
+        //return new CommandReward(null, inventorySlots, icon, commands);
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 }
