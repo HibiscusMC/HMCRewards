@@ -40,8 +40,15 @@ public final class UserDatastoreProvider implements Provider<UserDatastore> {
                 return new MemoryUserDatastore();
             case "mongo":
             case "mongodb": {
-                final Logger logger = Logger.getLogger("org.mongodb.driver");
-                logger.setLevel(Level.WARNING);
+                final String[] loggersToDisable = {
+                        "org.mongodb.driver",
+                        "org.mongodb.driver.client",
+                        "org.mongodb.driver.cluster"
+                };
+                for (final String loggerName : loggersToDisable) {
+                    final Logger logger = Logger.getLogger(loggerName);
+                    logger.setLevel(Level.WARNING);
+                }
 
                 final MongoClient client = MongoClients.create(requireNonNull(section.getString("mongodb.uri"), "'uri' not specified for mongodb datastore."));
 
