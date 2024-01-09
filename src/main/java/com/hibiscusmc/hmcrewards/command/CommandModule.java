@@ -6,5 +6,6 @@ public final class CommandModule extends BukkitAbstractModule {
     @Override
     protected void configure() {
         bindServices().to(CommandService.class);
+        bindCommands().to(HMCRewardsCommand.class);
     }
 }
