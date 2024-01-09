@@ -12,9 +12,6 @@ import team.unnamed.inject.Inject;
 import team.unnamed.inject.Named;
 import team.unnamed.inject.Provider;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import static java.util.Objects.requireNonNull;
 
 public final class UserDatastoreProvider implements Provider<UserDatastore> {
@@ -40,16 +37,6 @@ public final class UserDatastoreProvider implements Provider<UserDatastore> {
                 return new MemoryUserDatastore();
             case "mongo":
             case "mongodb": {
-                final String[] loggersToDisable = {
-                        "org.mongodb.driver",
-                        "org.mongodb.driver.client",
-                        "org.mongodb.driver.cluster"
-                };
-                for (final String loggerName : loggersToDisable) {
-                    final Logger logger = Logger.getLogger(loggerName);
-                    logger.setLevel(Level.WARNING);
-                }
-
                 final MongoClient client = MongoClients.create(requireNonNull(section.getString("mongodb.uri"), "'uri' not specified for mongodb datastore."));
 
                 // defer client.close() to be called when the plugin is disabled
