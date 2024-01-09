@@ -30,7 +30,8 @@ public final class HMCRewardsCommand implements CommandClass {
     @Inject private RewardQueueMenu rewardQueueMenu;
 
     @Command(names = "queue", permission = "hmcrewards.command.queue")
-    public <T extends Reward> void queue(final @NotNull CommandSender sender, final @NotNull Player target, final @NotNull RewardProvider<T> provider, final @NotNull String arg) {
+    @SuppressWarnings("rawtypes")
+    public void queue(final @NotNull CommandSender sender, final @NotNull Player target, final @NotNull RewardProvider provider, final @NotNull String arg) {
         final User user = userManager.getCached(target);
         if (user == null) {
             throw new CommandUsage(Component.translatable("user.not_found", target.displayName()));
