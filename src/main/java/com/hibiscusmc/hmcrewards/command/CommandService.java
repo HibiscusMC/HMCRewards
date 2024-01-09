@@ -1,5 +1,6 @@
 package com.hibiscusmc.hmcrewards.command;
 
+import com.hibiscusmc.hmcrewards.command.arg.HMCRewardsCommandModule;
 import com.hibiscusmc.hmcrewards.feedback.TranslationManager;
 import com.hibiscusmc.hmcrewards.util.Service;
 import me.fixeddev.commandflow.CommandManager;
@@ -37,6 +38,7 @@ public final class CommandService implements Service {
         final PartInjector partInjector = PartInjector.create();
         partInjector.install(new DefaultsModule());
         partInjector.install(new BukkitModule());
+        partInjector.install(new HMCRewardsCommandModule());
 
         final AnnotatedCommandTreeBuilder builder = AnnotatedCommandTreeBuilder.create(
                 new AnnotatedCommandBuilderImpl(partInjector),
