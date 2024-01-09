@@ -5,7 +5,7 @@ import com.hibiscusmc.hmcrewards.feedback.FeedbackModule;
 import com.hibiscusmc.hmcrewards.item.ItemModule;
 import com.hibiscusmc.hmcrewards.reward.RewardModule;
 import com.hibiscusmc.hmcrewards.user.UserModule;
-import com.hibiscusmc.hmcrewards.util.ConfigurationManager;
+import com.hibiscusmc.hmcrewards.util.ConfigurationBinder;
 import com.hibiscusmc.hmcrewards.util.Service;
 import me.lojosho.hibiscuscommons.HibiscusPlugin;
 import org.bukkit.plugin.Plugin;
@@ -24,8 +24,6 @@ import java.util.logging.Level;
 
 @SuppressWarnings("unused")
 public final class HMCRewardsPlugin extends HibiscusPlugin implements Module {
-    public static final String GLOBAL_CONFIG = "config.yml";
-    public static final String MENU_CONFIG = "menu.yml";
 
     @Inject private Set<Service> services;
 
@@ -33,10 +31,6 @@ public final class HMCRewardsPlugin extends HibiscusPlugin implements Module {
 
     @Override
     public void onStart() {
-        final var configurationManager = ConfigurationManager.create(this);
-        configurationManager.getOrCreate(GLOBAL_CONFIG);
-        configurationManager.getOrCreate(MENU_CONFIG);
-
         Injector.create(this).injectMembers(this);
 
         if (services != null) {
@@ -79,6 +73,11 @@ public final class HMCRewardsPlugin extends HibiscusPlugin implements Module {
         binder.bind(HMCRewardsPlugin.class).toInstance(this);
         binder.bind(JavaPlugin.class).to(HMCRewardsPlugin.class);
         binder.bind(Plugin.class).to(HMCRewardsPlugin.class);
+
+        // bind configuration
+        ConfigurationBinder.create(this, binder)
+                .bind("config.yml")
+                .bind("menu.yml");
 
         // install modules
         binder.install(new CommandModule());

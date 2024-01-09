@@ -2,7 +2,7 @@ package com.hibiscusmc.hmcrewards.user.data.mongo;
 
 import com.hibiscusmc.hmcrewards.user.User;
 import com.hibiscusmc.hmcrewards.user.data.UserDatastore;
-import com.hibiscusmc.hmcrewards.user.data.mongo.serialize.UserBsonCodec;
+import com.hibiscusmc.hmcrewards.user.data.mongo.serialize.UserCodec;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
@@ -18,7 +18,7 @@ public final class MongoUserDatastore implements UserDatastore {
 
     public MongoUserDatastore(final @NotNull MongoDatabase database) {
         this.collection = database.getCollection("users", User.class)
-                .withCodecRegistry(CodecRegistries.fromCodecs(new UserBsonCodec()));
+                .withCodecRegistry(CodecRegistries.fromCodecs(new UserCodec()));
     }
 
     @Override

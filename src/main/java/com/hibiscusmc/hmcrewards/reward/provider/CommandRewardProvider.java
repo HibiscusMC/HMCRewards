@@ -1,5 +1,8 @@
 package com.hibiscusmc.hmcrewards.reward.provider;
 
+import com.hibiscusmc.hmcrewards.data.serialize.DnCodec;
+import com.hibiscusmc.hmcrewards.data.serialize.DnReader;
+import com.hibiscusmc.hmcrewards.data.serialize.DnWriter;
 import com.hibiscusmc.hmcrewards.item.ItemDefinition;
 import com.hibiscusmc.hmcrewards.reward.CommandReward;
 import org.bukkit.Bukkit;
@@ -11,14 +14,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import team.unnamed.inject.Inject;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public final class CommandRewardProvider implements RewardProvider<CommandReward> {
+public final class CommandRewardProvider implements RewardProvider<CommandReward>, DnCodec<CommandReward> {
+    public static final String ID = "command";
+
     @Inject private Plugin plugin;
 
     @Override
     public @NotNull String id() {
-        return "command";
+        return ID;
     }
 
     @Override
@@ -63,7 +69,7 @@ public final class CommandRewardProvider implements RewardProvider<CommandReward
             icon = ItemDefinition.deserialize(iconSection);
         }
 
-        return new CommandReward(requiredSpace, icon, commands);
+        return new CommandReward(section.getName(), requiredSpace, icon, commands);
     }
 
     @Override
@@ -79,5 +85,50 @@ public final class CommandRewardProvider implements RewardProvider<CommandReward
         }
 
         return fromConfiguration(section);
+    }
+
+    @Override
+    public @NotNull Class<CommandReward> type() {
+        return CommandReward.class;
+    }
+
+    @Override
+    public void encode(final @NotNull DnWriter writer, final @NotNull CommandReward value) {
+        final String reference = value.reference();
+        if (reference != null) {
+            // just write reference instead of all the properties
+            writer.writeStringValue(reference);
+            return;
+        }
+
+        writer.writeObjectStart();
+
+        writer.writeObjectEnd();
+    }
+
+    @Override
+    public @NotNull CommandReward decode(final @NotNull DnReader reader) {
+        reader.readObjectStart();
+
+        final List<String> commands = new ArrayList<>();
+        int inventorySlots = 1;
+
+        while (reader.hasMoreValuesOrEntries()) {
+            String name = reader.readName();
+            if (name.equals("commands")) {
+                reader.readArrayStart();
+                while (reader.hasMoreValuesOrEntries()) {
+                    commands.add(reader.readStringValue());
+                }
+                reader.readArrayEnd();
+            } else {
+                reader.skipValue();
+            }
+        }
+        if (command == null) {
+            throw new IllegalArgumentException("CommandReward does not contain a command");
+        }
+        reader.readObjectEnd();
+        return new CommandReward(null, inventorySlots, icon, commands);
     }
 }

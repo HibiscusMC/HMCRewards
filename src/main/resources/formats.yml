@@ -17,8 +17,14 @@ command.invalid.long: '<red>The number <arg> is not a valid long!'
 
 
 user.not_found: '<red>Could''t find user information for <arg>'
+user.self_not_found: '<red>Could''t find your user information, try relogging'
 
 reward.invalid: '<red>Invalid reward argument: <arg> (Not found)'
 reward.queued: '<green>Queued reward for player <arg>'
 
 reload.success: '<green>Successfully reloaded the plugin in <dark_green><arg></dark_green> ms'
+
+
+menu.invalid_page: '<red>Invalid page.'
+menu.no_permission_others: '<red>You don''t have permission to open this menu for others.'
+menu.self_console: '<red>You can''t open this menu in console.'
