@@ -22,6 +22,7 @@ public final class CommandService implements Service {
     @Inject private Set<CommandClass> commandClasses;
     @Inject private Injector injector;
     @Inject private TranslationManager translationManager;
+    @Inject private HMCRewardsCommandModule commandModule;
 
     @Override
     public void start() {
@@ -38,7 +39,7 @@ public final class CommandService implements Service {
         final PartInjector partInjector = PartInjector.create();
         partInjector.install(new DefaultsModule());
         partInjector.install(new BukkitModule());
-        partInjector.install(new HMCRewardsCommandModule());
+        partInjector.install(commandModule);
 
         final AnnotatedCommandTreeBuilder builder = AnnotatedCommandTreeBuilder.create(
                 new AnnotatedCommandBuilderImpl(partInjector),
