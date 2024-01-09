@@ -53,5 +53,7 @@ tasks {
         relocate("team.unnamed.inject", "$pkg.inject")
         relocate("me.fixeddev.commandflow", "$pkg.commandflow")
         relocate("dev.triumphteam.gui", "$pkg.triumphgui")
+        relocate("com.mongodb", "$pkg.mongodb")
+        relocate("org.bson", "$pkg.bson")
     }
 }
