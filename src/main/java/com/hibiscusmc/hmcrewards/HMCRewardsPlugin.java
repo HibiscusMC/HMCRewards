@@ -8,6 +8,7 @@ import com.hibiscusmc.hmcrewards.user.UserModule;
 import com.hibiscusmc.hmcrewards.util.ConfigurationBinder;
 import com.hibiscusmc.hmcrewards.util.Service;
 import me.lojosho.hibiscuscommons.HibiscusPlugin;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +27,7 @@ import java.util.logging.Level;
 public final class HMCRewardsPlugin extends HibiscusPlugin implements Module {
 
     @Inject private Set<Service> services;
+    @Inject private Set<Listener> listeners;
 
     private final Collection<AutoCloseable> resources = new HashSet<>();
 
@@ -37,6 +39,13 @@ public final class HMCRewardsPlugin extends HibiscusPlugin implements Module {
             for (final Service service : services) {
                 service.start();
             }
+        }
+
+        if (listeners != null) {
+            for (final Listener listener : listeners) {
+                getServer().getPluginManager().registerEvents(listener, this);
+            }
+            listeners = null;
         }
     }
 
