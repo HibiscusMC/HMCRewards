@@ -104,9 +104,9 @@ public final class RewardQueueMenu {
                     });
 
             if (update) {
-                gui.updateItem(slot, button);
+                gui.updateItem(slot++, button);
             } else {
-                gui.setItem(slot, button);
+                gui.setItem(slot++, button);
             }
         }
 
