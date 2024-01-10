@@ -70,7 +70,7 @@ public final class UserCodec implements DnCodec<User> {
         }
 
         reader.readObjectEnd();
-        return User.user(uuid, name);
+        return User.user(uuid, name, rewards);
     }
 
     @Override

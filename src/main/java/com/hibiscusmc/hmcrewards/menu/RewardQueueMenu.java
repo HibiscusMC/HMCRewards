@@ -91,8 +91,14 @@ public final class RewardQueueMenu {
                             final RewardProvider provider = rewardProviderRegistry.provider(reward.type());
                             if (provider != null) {
                                 // give the reward and remove
-                                provider.give(player, reward);
-                                currentRewards.remove(index);
+                                final RewardProvider.GiveResult result = provider.give(player, reward);
+                                if (result == RewardProvider.GiveResult.SUCCESS) {
+                                    // success giving it
+                                    currentRewards.remove(index);
+                                } else {
+                                    translationManager.send(player, "reward.give." + result.name().toLowerCase());
+                                    return;
+                                }
                             } else {
                                 // can't give reward, provider not found
                                 plugin.getLogger().warning("Provider for reward type " + reward.type() + " not found.");
@@ -127,10 +133,24 @@ public final class RewardQueueMenu {
                 // should never be null
                 assert iconSection != null;
 
+                final var iconSlots = iconSection.getIntegerList("slots");
+
                 if (key.equalsIgnoreCase("next-page") && currentPage >= maxPage) {
+                    if (update) {
+                        // remove next page button
+                        for (final int iconSlot : iconSlots) {
+                            gui.removeItem(iconSlot);
+                        }
+                    }
                     // skip if no next page
                     continue;
                 } else if (key.equalsIgnoreCase("previous-page") && currentPage <= 1) {
+                    if (update) {
+                        // remove previous page button
+                        for (final int iconSlot : iconSlots) {
+                            gui.removeItem(iconSlot);
+                        }
+                    }
                     // skip if no previous page
                     continue;
                 }
@@ -155,7 +175,7 @@ public final class RewardQueueMenu {
                             });
                         });
 
-                for (final int iconSlot : iconSection.getIntegerList("slots")) {
+                for (final int iconSlot : iconSlots) {
                     if (update) {
                         gui.updateItem(iconSlot, button);
                     } else {
