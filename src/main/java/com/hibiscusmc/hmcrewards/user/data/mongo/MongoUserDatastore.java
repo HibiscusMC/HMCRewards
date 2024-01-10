@@ -9,7 +9,10 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
+import org.bson.codecs.Codec;
+import org.bson.codecs.configuration.CodecProvider;
 import org.bson.codecs.configuration.CodecRegistries;
+import org.bson.codecs.configuration.CodecRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,8 +22,22 @@ public final class MongoUserDatastore implements UserDatastore {
     private final MongoCollection<User> collection;
 
     public MongoUserDatastore(final @NotNull MongoDatabase database, final @NotNull RewardProviderRegistry rewardProviderRegistry) {
-        this.collection = database.getCollection("users", User.class)
-                .withCodecRegistry(CodecRegistries.fromCodecs(new BsonCodecAdapter<>(new UserCodec(rewardProviderRegistry))));
+        this.collection = database
+                .withCodecRegistry(CodecRegistries.fromRegistries(
+                        database.getCodecRegistry(),
+                        CodecRegistries.fromProviders(new CodecProvider() {
+                            private final Codec<User> USER_CODEC = new BsonCodecAdapter<>(new UserCodec(rewardProviderRegistry));
+                            @Override
+                            public <T> Codec<T> get(Class<T> clazz, CodecRegistry registry) {
+                                // if class is User or subclass of User, return the UserCodec
+                                if (User.class.isAssignableFrom(clazz)) {
+                                    //noinspection unchecked
+                                    return (Codec<T>) USER_CODEC;
+                                }
+                                return null;
+                            }
+                        })
+                )).getCollection("users", User.class);
     }
 
     @Override
@@ -30,6 +47,6 @@ public final class MongoUserDatastore implements UserDatastore {
 
     @Override
     public void save(final @NotNull User user) {
-        collection.replaceOne(Filters.eq("uuid", user.uuid().toString()),user, new ReplaceOptions().upsert(true));
+        collection.replaceOne(Filters.eq("uuid", user.uuid().toString()), user, new ReplaceOptions().upsert(true));
     }
 }

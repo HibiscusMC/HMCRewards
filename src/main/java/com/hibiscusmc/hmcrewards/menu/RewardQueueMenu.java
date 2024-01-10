@@ -24,6 +24,7 @@ import team.unnamed.inject.Inject;
 import team.unnamed.inject.Named;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public final class RewardQueueMenu {
@@ -67,11 +68,11 @@ public final class RewardQueueMenu {
         final int maxItemCountPerPage = listTo - listFrom + 1;
 
         final int maxPage = (int) Math.ceil((double) rewards.size() / maxItemCountPerPage);
-        final int currentPage = Math.min(Math.max(1, requestedPage), maxPage);
+        final int currentPage = Math.max(1, Math.min(requestedPage, maxPage));
 
         final int startIndex = (currentPage - 1) * maxItemCountPerPage;
         final int endIndex = Math.min(startIndex + maxItemCountPerPage, rewards.size());
-        final List<Reward> pageRewards = rewards.subList(startIndex, endIndex);
+        final List<Reward> pageRewards = startIndex == endIndex ? Collections.emptyList() : rewards.subList(startIndex, endIndex);
 
         // fill in reward icons
         int slot = listFrom;

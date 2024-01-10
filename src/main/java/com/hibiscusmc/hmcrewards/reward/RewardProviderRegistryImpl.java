@@ -2,6 +2,7 @@ package com.hibiscusmc.hmcrewards.reward;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import team.unnamed.inject.Inject;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -11,6 +12,12 @@ import static java.util.Objects.requireNonNull;
 
 final class RewardProviderRegistryImpl implements RewardProviderRegistry {
     private final Map<String, RewardProvider<?>> providers = new HashMap<>();
+
+    @Inject
+    void registerDefaults(final @NotNull ItemRewardProvider item, final @NotNull CommandRewardProvider command) {
+        register(item);
+        register(command);
+    }
 
     @Override
     public void register(final @NotNull RewardProvider<?> provider) {
