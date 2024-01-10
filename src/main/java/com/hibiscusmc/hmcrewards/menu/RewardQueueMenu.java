@@ -42,17 +42,17 @@ public final class RewardQueueMenu {
                 .disableAllInteractions()
                 .create();
 
-        updateRewardIcons(player, gui, page, false);
-
-        gui.open(player);
+        if (updateRewardIcons(player, gui, page, false)) {
+            gui.open(player);
+        }
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private void updateRewardIcons(final @NotNull Player player, final @NotNull Gui gui, final int requestedPage, final boolean update) {
+    private boolean updateRewardIcons(final @NotNull Player player, final @NotNull Gui gui, final int requestedPage, final boolean update) {
         final User user = userManager.getCached(player);
         if (user == null) {
             translationManager.send(player, "user.self_not_found");
-            return;
+            return false;
         }
 
         // copy current reward list
@@ -134,11 +134,15 @@ public final class RewardQueueMenu {
                 final GuiItem button = ItemBuilder.from(icon)
                         .asGuiItem(switch (key.toLowerCase()) {
                             case "next-page" -> (GuiAction<InventoryClickEvent>) (event -> {
-                                updateRewardIcons(player, gui, currentPage + 1, true);
+                                if (!updateRewardIcons(player, gui, currentPage + 1, true)) {
+                                    player.closeInventory();
+                                }
                                 event.setCancelled(true);
                             });
                             case "previous-page" -> (GuiAction<InventoryClickEvent>) (event -> {
-                                updateRewardIcons(player, gui, currentPage - 1, true);
+                                if (!updateRewardIcons(player, gui, currentPage - 1, true)) {
+                                    player.closeInventory();
+                                }
                                 event.setCancelled(true);
                             });
                             default -> (GuiAction<InventoryClickEvent>) (event -> {
@@ -155,5 +159,6 @@ public final class RewardQueueMenu {
                 }
             }
         }
+        return true;
     }
 }

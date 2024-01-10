@@ -46,23 +46,18 @@ public final class UserCodec implements DnCodec<User> {
                 rewards = new ArrayList<>();
                 reader.readArrayStart();
                 while (reader.hasMoreValuesOrEntries()) {
-                    if (reader.readType() == DnType.VALUE) {
-                        // id-only
-                        final String id = reader.readStringValue();
-                        Reward reward = null;
-                        for (final RewardProvider<?> provider : rewardProviderRegistry.providers()) {
-                            if ((reward = provider.fromReference(id)) != null) {
-                                break;
-                            }
+                    // id-only
+                    final String id = reader.readStringValue();
+                    Reward reward = null;
+                    for (final RewardProvider<?> provider : rewardProviderRegistry.providers()) {
+                        if ((reward = provider.fromReference(id)) != null) {
+                            break;
                         }
-                        if (reward == null) {
-                            throw new IllegalStateException("Unknown reward reference '" + id + "'.");
-                        }
-                        rewards.add(reward);
-                    } else {
-                        // object
-                        throw new IllegalStateException("Object rewards are not supported yet.");
                     }
+                    if (reward == null) {
+                        throw new IllegalStateException("Unknown reward reference '" + id + "'.");
+                    }
+                    rewards.add(reward);
                 }
                 reader.readArrayEnd();
             } else {
