@@ -42,7 +42,7 @@ public interface RewardProvider<T extends Reward> {
     @Nullable T fromConfiguration(final @NotNull ConfigurationSection section) throws IllegalArgumentException;
 
     default @Nullable T fromReference(final @NotNull String reference) {
-        return null;
+        return fromCommandLine(reference);
     }
 
     default @Nullable T fromCommandLine(final @NotNull String string) throws IllegalArgumentException {

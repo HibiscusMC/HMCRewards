@@ -122,6 +122,11 @@ public final class RewardQueueMenu {
         final ConfigurationSection iconsSection = config.getConfigurationSection("icons");
         if (iconsSection != null) {
             for (final String key : iconsSection.getKeys(false)) {
+                final ConfigurationSection iconSection = iconsSection.getConfigurationSection(key);
+
+                // should never be null
+                assert iconSection != null;
+
                 if (key.equalsIgnoreCase("next-page") && currentPage >= maxPage) {
                     // skip if no next page
                     continue;
@@ -130,7 +135,7 @@ public final class RewardQueueMenu {
                     continue;
                 }
 
-                final ItemStack icon = ItemDefinition.deserialize(iconsSection).build(itemMatcher);
+                final ItemStack icon = ItemDefinition.deserialize(iconSection).build(itemMatcher);
                 final GuiItem button = ItemBuilder.from(icon)
                         .asGuiItem(switch (key.toLowerCase()) {
                             case "next-page" -> (GuiAction<InventoryClickEvent>) (event -> {
@@ -150,7 +155,7 @@ public final class RewardQueueMenu {
                             });
                         });
 
-                for (final int iconSlot : iconsSection.getIntegerList("slots")) {
+                for (final int iconSlot : iconSection.getIntegerList("slots")) {
                     if (update) {
                         gui.updateItem(iconSlot, button);
                     } else {
