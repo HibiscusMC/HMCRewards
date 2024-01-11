@@ -11,8 +11,8 @@ import com.hibiscusmc.hmcrewards.util.ConfigurationBinder;
 import me.fixeddev.commandflow.annotated.CommandClass;
 import me.fixeddev.commandflow.annotated.annotation.Command;
 import me.fixeddev.commandflow.annotated.annotation.OptArg;
-import me.fixeddev.commandflow.exception.CommandUsage;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -34,29 +34,33 @@ public final class HMCRewardsCommand implements CommandClass {
     public void queue(final @NotNull CommandSender sender, final @NotNull Player target, final @NotNull RewardProvider provider, final @NotNull String arg) {
         final User user = userManager.getCached(target);
         if (user == null) {
-            throw new CommandUsage(Component.translatable("user.not_found", target.displayName()));
+            translationManager.send(sender, "user.not_found", Placeholder.component("arg", target.displayName()));
+            return;
         }
 
         final Reward reward = provider.fromCommandLine(arg);
         if (reward == null) {
-            throw new CommandUsage(Component.translatable("reward.invalid", Component.text(arg)));
+            translationManager.send(sender, "reward.invalid", Placeholder.component("arg", Component.text(arg)));
+            return;
         }
 
         user.rewards().add(reward);
-        throw new CommandUsage(Component.translatable("reward.queued", target.displayName()));
+        translationManager.send(sender, "reward.queued", Placeholder.component("arg", target.displayName()));
     }
 
     @Command(names = { "", "menu" }, permission = "hmcrewards.command.menu")
     public void menu(final @NotNull CommandSender sender, final @OptArg @Nullable Player target) {
         if (target != null && target != sender && !sender.hasPermission("hmcrewards.command.menu.others")) {
-            throw new CommandUsage(Component.translatable("menu.no_permission_others"));
+            translationManager.send(sender, "menu.no_permission_others");
+            return;
         }
 
         if (target != null) {
             rewardQueueMenu.open(target, 1);
         } else {
             if (!(sender instanceof Player)) {
-                throw new CommandUsage(Component.translatable("menu.self_console"));
+                translationManager.send(sender, "menu.self_console");
+                return;
             }
 
             rewardQueueMenu.open((Player) sender, 1);
@@ -64,12 +68,12 @@ public final class HMCRewardsCommand implements CommandClass {
     }
 
     @Command(names = "reload", permission = "hmcrewards.command.reload")
-    public void reload() {
+    public void reload(final @NotNull CommandSender sender) {
         final long start = System.currentTimeMillis();
         translationManager.loadFormats();
         soundManager.loadSounds();
         configurationBinder.loadAll();
         final long took = System.currentTimeMillis() - start;
-        throw new CommandUsage(Component.translatable("reload.success", Component.text(took)));
+        translationManager.send(sender, "reload.success", Placeholder.component("arg", Component.text(took)));
     }
 }
