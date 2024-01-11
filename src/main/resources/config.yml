@@ -6,6 +6,16 @@ data:
     uri: 'mongodb://localhost:27017'
     database: 'hmcrewards'
 
+# configure the used sounds, the format is:
+#    <type> [volume] [pitch]
+# the type must be Minecraft's sound name, check
+# a full list here: https://www.digminecraft.com/lists/sound_list_pc.php
+# Also note that sounds are optional, you can just remove
+# one and it will not play
+sounds:
+  # reward-give: 'entity.player.levelup 1 1'        (yusshu note: not sure if these sounds exists, copilot wrote them)
+  # reward-give-error: 'entity.villager.no 1 1'
+
 rewards:
   command_1:
     type: "command"

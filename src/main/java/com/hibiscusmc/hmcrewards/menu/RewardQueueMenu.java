@@ -1,5 +1,6 @@
 package com.hibiscusmc.hmcrewards.menu;
 
+import com.hibiscusmc.hmcrewards.feedback.SoundManager;
 import com.hibiscusmc.hmcrewards.feedback.TranslationManager;
 import com.hibiscusmc.hmcrewards.item.ItemDefinition;
 import com.hibiscusmc.hmcrewards.item.ItemMatcher;
@@ -31,6 +32,7 @@ public final class RewardQueueMenu {
     @Inject private Plugin plugin;
     @Inject private UserManager userManager;
     @Inject private TranslationManager translationManager;
+    @Inject private SoundManager soundManager;
     @Inject private ItemMatcher itemMatcher;
     @Inject private RewardProviderRegistry rewardProviderRegistry;
     @Inject @Named("menu.yml") private YamlFileConfiguration config;
@@ -95,8 +97,10 @@ public final class RewardQueueMenu {
                                 if (result == RewardProvider.GiveResult.SUCCESS) {
                                     // success giving it
                                     currentRewards.remove(index);
+                                    soundManager.play(player, "reward-give");
                                 } else {
                                     translationManager.send(player, "reward.give." + result.name().toLowerCase());
+                                    soundManager.play(player, "reward-give-error");
                                     return;
                                 }
                             } else {
