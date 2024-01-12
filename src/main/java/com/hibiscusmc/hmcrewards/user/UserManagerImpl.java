@@ -3,6 +3,7 @@ package com.hibiscusmc.hmcrewards.user;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -23,5 +24,15 @@ final class UserManagerImpl implements UserManager {
     @Override
     public void update(final @NotNull User user) {
         cache.put(user.uuid(), user);
+    }
+
+    @Override
+    public @NotNull Collection<User> cached() {
+        return cache.values();
+    }
+
+    @Override
+    public void clearCache() {
+        cache.clear();
     }
 }

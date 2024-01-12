@@ -11,5 +11,6 @@ public final class UserModule extends BukkitAbstractModule {
         bind(UserDatastore.class).toProvider(UserDatastoreProvider.class).singleton();
         bind(UserManager.class).to(UserManagerImpl.class).singleton();
         bindListeners().to(PlayerJoinQuitListener.class);
+        bindServices().to(UserDataSaveService.class);
     }
 }

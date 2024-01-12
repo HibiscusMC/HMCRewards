@@ -4,6 +4,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.UUID;
 
 public interface UserManager {
@@ -16,4 +17,8 @@ public interface UserManager {
     void removeCached(final @NotNull User user);
 
     void update(final @NotNull User user);
+
+    @NotNull Collection<User> cached();
+
+    void clearCache();
 }
