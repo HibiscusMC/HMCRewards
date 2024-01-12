@@ -1,6 +1,5 @@
 package com.hibiscusmc.hmcrewards.user;
 
-import com.hibiscusmc.hmcrewards.reward.Reward;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -12,9 +11,9 @@ public interface User {
 
     @NotNull String name();
 
-    @NotNull List<Reward> rewards();
+    @NotNull List<String> rewards();
 
-    static @NotNull User user(final @NotNull UUID uuid, final @NotNull String name, final @NotNull List<Reward> rewards) {
+    static @NotNull User user(final @NotNull UUID uuid, final @NotNull String name, final @NotNull List<String> rewards) {
         return new UserImpl(uuid, name, rewards);
     }
 

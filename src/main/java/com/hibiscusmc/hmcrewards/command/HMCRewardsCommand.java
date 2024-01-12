@@ -3,7 +3,6 @@ package com.hibiscusmc.hmcrewards.command;
 import com.hibiscusmc.hmcrewards.feedback.SoundManager;
 import com.hibiscusmc.hmcrewards.feedback.TranslationManager;
 import com.hibiscusmc.hmcrewards.menu.RewardQueueMenu;
-import com.hibiscusmc.hmcrewards.reward.Reward;
 import com.hibiscusmc.hmcrewards.reward.RewardProvider;
 import com.hibiscusmc.hmcrewards.user.User;
 import com.hibiscusmc.hmcrewards.user.UserManager;
@@ -38,13 +37,12 @@ public final class HMCRewardsCommand implements CommandClass {
             return;
         }
 
-        final Reward reward = provider.fromCommandLine(arg);
-        if (reward == null) {
+        if (provider.fromReference(arg) == null) {
             translationManager.send(sender, "reward.invalid", Placeholder.component("arg", Component.text(arg)));
             return;
         }
 
-        user.rewards().add(reward);
+        user.rewards().add(arg);
         translationManager.send(sender, "reward.queued", Placeholder.component("arg", target.displayName()));
     }
 

@@ -20,6 +20,17 @@ final class RewardProviderRegistryImpl implements RewardProviderRegistry {
     }
 
     @Override
+    public @Nullable Reward findByReference(final @NotNull String rewardRef) {
+        for (final RewardProvider<?> provider : providers.values()) {
+            final Reward reward = provider.fromReference(rewardRef);
+            if (reward != null) {
+                return reward;
+            }
+        }
+        return null;
+    }
+
+    @Override
     public void register(final @NotNull RewardProvider<?> provider) {
         requireNonNull(provider, "provider");
         providers.put(provider.id(), provider);
