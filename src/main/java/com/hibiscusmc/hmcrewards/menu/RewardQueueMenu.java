@@ -130,6 +130,7 @@ public final class RewardQueueMenu {
                                 final RewardProvider.GiveResult result = provider.give(player, reward);
                                 if (result == RewardProvider.GiveResult.SUCCESS) {
                                     // success giving it
+                                    userManager.saveAsync(user);
                                     currentRewards.remove(index);
                                     soundManager.play(player, "reward-give");
                                 } else {
@@ -174,36 +175,24 @@ public final class RewardQueueMenu {
 
                 final var iconSlots = iconSection.getIntegerList("slots");
 
-                if (key.equalsIgnoreCase("next-page") && currentPage >= maxPage) {
-                    if (update) {
-                        // remove next page button
-                        for (final int iconSlot : iconSlots) {
-                            gui.removeItem(iconSlot);
-                        }
-                    }
-                    // skip if no next page
-                    continue;
-                } else if (key.equalsIgnoreCase("previous-page") && currentPage <= 1) {
-                    if (update) {
-                        // remove previous page button
-                        for (final int iconSlot : iconSlots) {
-                            gui.removeItem(iconSlot);
-                        }
-                    }
-                    // skip if no previous page
-                    continue;
-                }
-
                 final ItemStack icon = ItemDefinition.deserialize(iconSection).build(itemMatcher);
                 final GuiItem button = ItemBuilder.from(icon)
                         .asGuiItem(switch (key.toLowerCase()) {
                             case "next-page" -> (GuiAction<InventoryClickEvent>) (event -> {
+                                if (currentPage + 1 > maxPage) {
+                                    event.setCancelled(true);
+                                    return;
+                                }
                                 if (!updateRewardIcons(player, gui, currentPage + 1, true)) {
                                     player.closeInventory();
                                 }
                                 event.setCancelled(true);
                             });
                             case "previous-page" -> (GuiAction<InventoryClickEvent>) (event -> {
+                                if (currentPage - 1 < 1) {
+                                    event.setCancelled(true);
+                                    return;
+                                }
                                 if (!updateRewardIcons(player, gui, currentPage - 1, true)) {
                                     player.closeInventory();
                                 }

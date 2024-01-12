@@ -43,6 +43,7 @@ public final class HMCRewardsCommand implements CommandClass {
         }
 
         user.rewards().add(arg);
+        userManager.saveAsync(user);
         translationManager.send(sender, "reward.queued", Placeholder.component("arg", target.displayName()));
     }
 

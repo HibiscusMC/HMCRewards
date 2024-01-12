@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public interface UserManager {
     @Nullable User getCached(final @NotNull UUID id);
@@ -21,4 +22,6 @@ public interface UserManager {
     @NotNull Collection<User> cached();
 
     void clearCache();
+
+    @NotNull CompletableFuture<Void> saveAsync(final @NotNull User user);
 }
