@@ -17,6 +17,11 @@ final class MemoryUserDatastore implements UserDatastore {
     }
 
     @Override
+    public @Nullable User findByUsername(final @NotNull String username) {
+        return data.values().stream().filter(user -> user.name().equals(username)).findFirst().orElse(null);
+    }
+
+    @Override
     public void save(final @NotNull User user) {
         data.put(user.uuid(), user);
     }

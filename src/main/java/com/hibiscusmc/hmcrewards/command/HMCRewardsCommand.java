@@ -6,12 +6,14 @@ import com.hibiscusmc.hmcrewards.menu.RewardQueueMenu;
 import com.hibiscusmc.hmcrewards.reward.RewardProvider;
 import com.hibiscusmc.hmcrewards.user.User;
 import com.hibiscusmc.hmcrewards.user.UserManager;
+import com.hibiscusmc.hmcrewards.user.data.UserDatastore;
 import com.hibiscusmc.hmcrewards.util.ConfigurationBinder;
 import me.fixeddev.commandflow.annotated.CommandClass;
 import me.fixeddev.commandflow.annotated.annotation.Command;
 import me.fixeddev.commandflow.annotated.annotation.OptArg;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -23,6 +25,7 @@ import team.unnamed.inject.Inject;
 public final class HMCRewardsCommand implements CommandClass {
     @Inject private Plugin plugin;
     @Inject private UserManager userManager;
+    @Inject private UserDatastore userDatastore;
     @Inject private TranslationManager translationManager;
     @Inject private SoundManager soundManager;
     @Inject private ConfigurationBinder configurationBinder;
@@ -30,15 +33,32 @@ public final class HMCRewardsCommand implements CommandClass {
 
     @Command(names = "queue", permission = "hmcrewards.command.queue")
     @SuppressWarnings("rawtypes")
-    public void queue(final @NotNull CommandSender sender, final @NotNull Player target, final @NotNull RewardProvider provider, final @NotNull String arg) {
-        final User user = userManager.getCached(target);
-        if (user == null) {
-            translationManager.send(sender, "user.not_found", Placeholder.component("arg", target.displayName()));
-            return;
-        }
+    public void queue(final @NotNull CommandSender sender, final @NotNull String targetName, final @NotNull RewardProvider provider, final @NotNull String arg) {
+        final Player target = Bukkit.getPlayerExact(targetName);
 
         if (provider.fromReference(arg) == null) {
             translationManager.send(sender, "reward.invalid", Placeholder.component("arg", Component.text(arg)));
+            return;
+        }
+
+        if (target == null) {
+            // queue offline?
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                final User user = userDatastore.findByUsername(targetName);
+                if (user == null) {
+                    translationManager.send(sender, "user.not_found", Placeholder.component("arg", Component.text(targetName)));
+                    return;
+                }
+                user.rewards().add(arg);
+                userDatastore.save(user);
+                translationManager.send(sender, "reward.queued", Placeholder.component("arg", Component.text(targetName)));
+            });
+            return;
+        }
+
+        final User user = userManager.getCached(target);
+        if (user == null) {
+            translationManager.send(sender, "user.not_found", Placeholder.component("arg", target.displayName()));
             return;
         }
 

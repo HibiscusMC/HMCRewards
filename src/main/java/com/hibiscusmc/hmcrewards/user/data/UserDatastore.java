@@ -9,5 +9,7 @@ import java.util.UUID;
 public interface UserDatastore {
     @Nullable User findByUuid(final @NotNull UUID uuid);
 
+    @Nullable User findByUsername(final @NotNull String username);
+
     void save(final @NotNull User user);
 }

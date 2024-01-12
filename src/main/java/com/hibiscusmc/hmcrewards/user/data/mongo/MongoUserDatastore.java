@@ -46,6 +46,11 @@ public final class MongoUserDatastore implements UserDatastore {
     }
 
     @Override
+    public @Nullable User findByUsername(final @NotNull String username) {
+        return collection.find(Filters.eq("name", username)).first();
+    }
+
+    @Override
     public void save(final @NotNull User user) {
         collection.replaceOne(Filters.eq("uuid", user.uuid().toString()), user, new ReplaceOptions().upsert(true));
     }
