@@ -13,11 +13,15 @@ public interface User {
 
     @NotNull List<String> rewards();
 
-    static @NotNull User user(final @NotNull UUID uuid, final @NotNull String name, final @NotNull List<String> rewards) {
-        return new UserImpl(uuid, name, rewards);
+    boolean hasReceivedRewardsBefore();
+
+    void hasReceivedRewardsBefore(final boolean hasReceivedRewardsBefore);
+
+    static @NotNull User user(final @NotNull UUID uuid, final @NotNull String name, final @NotNull List<String> rewards, final boolean hasReceivedRewardsBefore) {
+        return new UserImpl(uuid, name, rewards, hasReceivedRewardsBefore);
     }
 
     static @NotNull User user(final @NotNull UUID uuid, final @NotNull String name) {
-        return user(uuid, name, new ArrayList<>());
+        return user(uuid, name, new ArrayList<>(), false);
     }
 }

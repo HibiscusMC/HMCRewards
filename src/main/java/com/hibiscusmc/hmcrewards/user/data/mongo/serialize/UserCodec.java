@@ -23,6 +23,7 @@ public final class UserCodec implements DnCodec<User> {
         UUID uuid = null;
         String name = null;
         final List<String> rewards = new ArrayList<>();
+        boolean hasReceivedRewardsBefore = false;
 
         while (reader.hasMoreValuesOrEntries()) {
             String prop = reader.readName();
@@ -36,6 +37,8 @@ public final class UserCodec implements DnCodec<User> {
                     rewards.add(reader.readStringValue());
                 }
                 reader.readArrayEnd();
+            } else if (prop.equals("hasReceivedRewardsBefore")) {
+                hasReceivedRewardsBefore = reader.readBooleanValue();
             } else {
                 reader.skipValue();
             }
@@ -46,7 +49,7 @@ public final class UserCodec implements DnCodec<User> {
         }
 
         reader.readObjectEnd();
-        return User.user(uuid, name, rewards);
+        return User.user(uuid, name, rewards, hasReceivedRewardsBefore);
     }
 
     @Override
@@ -54,6 +57,7 @@ public final class UserCodec implements DnCodec<User> {
         writer.writeObjectStart();
         writer.writeStringValue("uuid", value.uuid().toString());
         writer.writeStringValue("name", value.name());
+        writer.writeBooleanValue("hasClaimedRewardsBefore", value.hasReceivedRewardsBefore());
         writer.writeArrayStart("rewards");
         for (final String reward : value.rewards()) {
             writer.writeStringValue(reward);

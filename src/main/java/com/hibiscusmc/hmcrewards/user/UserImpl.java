@@ -11,11 +11,13 @@ final class UserImpl implements User {
     private final UUID uuid;
     private final String name;
     private final List<String> rewards;
+    private boolean hasReceivedRewardsBefore;
 
-    public UserImpl(final @NotNull UUID uuid, final @NotNull String name, final @NotNull List<String> rewards) {
+    public UserImpl(final @NotNull UUID uuid, final @NotNull String name, final @NotNull List<String> rewards, final boolean hasReceivedRewardsBefore) {
         this.uuid = requireNonNull(uuid, "uuid");
         this.name = requireNonNull(name, "name");
         this.rewards = requireNonNull(rewards, "rewards");
+        this.hasReceivedRewardsBefore = hasReceivedRewardsBefore;
     }
 
     @Override
@@ -31,5 +33,15 @@ final class UserImpl implements User {
     @Override
     public @NotNull List<String> rewards() {
         return rewards;
+    }
+
+    @Override
+    public boolean hasReceivedRewardsBefore() {
+        return hasReceivedRewardsBefore;
+    }
+
+    @Override
+    public void hasReceivedRewardsBefore(final boolean hasReceivedRewardsBefore) {
+        this.hasReceivedRewardsBefore = hasReceivedRewardsBefore;
     }
 }
