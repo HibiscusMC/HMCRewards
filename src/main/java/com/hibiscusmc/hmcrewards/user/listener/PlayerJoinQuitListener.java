@@ -1,8 +1,11 @@
 package com.hibiscusmc.hmcrewards.user.listener;
 
+import com.hibiscusmc.hmcrewards.feedback.TranslationManager;
 import com.hibiscusmc.hmcrewards.user.User;
 import com.hibiscusmc.hmcrewards.user.UserManager;
 import com.hibiscusmc.hmcrewards.user.data.UserDatastore;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -17,6 +20,7 @@ public final class PlayerJoinQuitListener implements Listener {
     @Inject private Plugin plugin;
     @Inject private UserDatastore userDatastore;
     @Inject private UserManager userManager;
+    @Inject private TranslationManager translationManager;
 
     @EventHandler
     public void onJoin(final @NotNull PlayerJoinEvent event) {
@@ -38,6 +42,12 @@ public final class PlayerJoinQuitListener implements Listener {
 
             // cache user data
             userManager.update(user);
+
+            // send unclaimed rewards notification
+            if (!user.rewards().isEmpty()) {
+                translationManager.send(player, "notification.unclaimed_rewards",
+                        Placeholder.component("amount", Component.text(user.rewards().size())));
+            }
         });
     }
 

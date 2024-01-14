@@ -16,6 +16,10 @@ command.invalid.enum_value: '<red>The value <arg> is not valid, the valid values
 command.invalid.long: '<red>The number <arg> is not a valid long!'
 
 
+notification.unclaimed_rewards: |-
+  <green>You have <dark_green><amount> <green>unclaimed rewards!
+  <green>Use <dark_green>/rewards <green>to claim them!
+
 user.not_found: '<red>Could''t find user information for <arg>'
 user.self_not_found: '<red>Could''t find your user information, try relogging'
 
