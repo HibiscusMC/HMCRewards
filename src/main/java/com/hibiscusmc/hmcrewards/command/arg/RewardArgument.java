@@ -33,12 +33,12 @@ public final class RewardArgument implements PartFactory {
         }
 
         @Override
-        public List<String> parseValue(CommandContext context, ArgumentStack stack, CommandPart parent) throws ArgumentParseException {
+        public List<RewardId> parseValue(CommandContext context, ArgumentStack stack, CommandPart parent) throws ArgumentParseException {
             final StringJoiner joiner = new StringJoiner(" ");
             while (stack.hasNext()) {
                 joiner.add(stack.next());
             }
-            return Collections.singletonList(joiner.toString());
+            return Collections.singletonList(new RewardId(joiner.toString()));
         }
 
         @Override

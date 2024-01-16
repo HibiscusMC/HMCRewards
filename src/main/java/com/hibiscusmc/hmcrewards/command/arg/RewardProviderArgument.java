@@ -62,6 +62,9 @@ public final class RewardProviderArgument implements PartFactory {
                 final String id = provider.id();
                 if (id.startsWith(arg)) {
                     ids.add(id);
+                    if (id.equals(arg)) {
+                        commandContext.setObject(RewardProvider.class, "RewardProvider", provider);
+                    }
                 }
             }
             return ids;
