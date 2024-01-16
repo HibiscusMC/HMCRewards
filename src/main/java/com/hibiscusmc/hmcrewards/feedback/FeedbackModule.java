@@ -7,15 +7,14 @@ import team.unnamed.inject.Provides;
 import team.unnamed.inject.Singleton;
 
 public final class FeedbackModule extends AbstractModule {
-    @Provides
-    @Singleton
-    public TranslationManager translationManager(final @NotNull Plugin plugin) {
-        return new TranslationManagerImpl(plugin);
+    @Override
+    protected void configure() {
+        bind(SoundManager.class).to(PluginSoundManager.class).singleton();
     }
 
     @Provides
     @Singleton
-    public SoundManager soundManager(final @NotNull Plugin plugin) {
-        return SoundManager.create(plugin);
+    public TranslationManager translationManager(final @NotNull Plugin plugin) {
+        return new TranslationManagerImpl(plugin);
     }
 }

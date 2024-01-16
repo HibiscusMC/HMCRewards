@@ -1,5 +1,6 @@
 package com.hibiscusmc.hmcrewards.feedback;
 
+import com.hibiscusmc.hmcrewards.util.YamlFileConfiguration;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
@@ -7,6 +8,8 @@ import org.bukkit.Location;
 import org.bukkit.plugin.Plugin;
 import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.NotNull;
+import team.unnamed.inject.Inject;
+import team.unnamed.inject.Named;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,18 +17,20 @@ import java.util.Map;
 import static java.util.Objects.requireNonNull;
 
 final class PluginSoundManager implements SoundManager {
-    private final Plugin plugin;
+    @Inject private Plugin plugin;
+    @Inject @Named("config.yml") private YamlFileConfiguration config;
+
     private final Map<String, Sound> sounds = new HashMap<>();
 
-    PluginSoundManager(final @NotNull Plugin plugin) {
-        this.plugin = requireNonNull(plugin, "plugin");
+    @Inject
+    void doLoadSounds() {
         loadSounds();
     }
 
     @Override
     public void loadSounds() {
         sounds.clear();
-        final var soundSection = plugin.getConfig().getConfigurationSection("sounds");
+        final var soundSection = config.getConfigurationSection("sounds");
         if (soundSection == null) {
             return;
         }

@@ -4,6 +4,7 @@ import com.hibiscusmc.hmcrewards.data.serialize.DnCodec;
 import com.hibiscusmc.hmcrewards.data.serialize.DnReader;
 import com.hibiscusmc.hmcrewards.data.serialize.DnWriter;
 import com.hibiscusmc.hmcrewards.item.ItemDefinition;
+import com.hibiscusmc.hmcrewards.util.YamlFileConfiguration;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -12,6 +13,7 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import team.unnamed.inject.Inject;
+import team.unnamed.inject.Named;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +22,7 @@ public final class CommandRewardProvider implements RewardProvider<CommandReward
     public static final String ID = "command";
 
     @Inject private Plugin plugin;
+    @Inject @Named("config.yml") private YamlFileConfiguration config;
 
     @Override
     public @NotNull String id() {
@@ -73,7 +76,7 @@ public final class CommandRewardProvider implements RewardProvider<CommandReward
 
     @Override
     public @Nullable CommandReward fromReference(final @NotNull String string) throws IllegalArgumentException {
-        final ConfigurationSection section = plugin.getConfig().getConfigurationSection("rewards." + string);
+        final ConfigurationSection section = config.getConfigurationSection("rewards." + string);
         if (section == null) {
             return null;
         }

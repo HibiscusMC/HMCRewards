@@ -2,7 +2,6 @@ package com.hibiscusmc.hmcrewards.feedback;
 
 import net.kyori.adventure.audience.Audience;
 import org.bukkit.Location;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -33,15 +32,4 @@ public interface SoundManager {
      * @param at The location to play the sound at
      */
     void play(final @NotNull Audience audience, final @NotNull String soundId, final @NotNull Location at);
-
-    /**
-     * Creates a new {@link SoundManager} that takes the sounds
-     * from the given plugin configuration.
-     *
-     * @param plugin The plugin to take the sounds from
-     * @return The created sound manager
-     */
-    static @NotNull SoundManager create(final @NotNull Plugin plugin) {
-        return new PluginSoundManager(plugin);
-    }
 }
