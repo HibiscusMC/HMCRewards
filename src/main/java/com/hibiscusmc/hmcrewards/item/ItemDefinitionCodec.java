@@ -31,6 +31,7 @@ public final class ItemDefinitionCodec implements DnCodec<ItemDefinition> {
         reader.readObjectStart();
         String material = null;
         String displayName = null;
+        int amount = 1;
         final List<String> lore = new ArrayList<>();
 
         while (reader.hasMoreValuesOrEntries()) {
@@ -38,6 +39,7 @@ public final class ItemDefinitionCodec implements DnCodec<ItemDefinition> {
             switch (name) {
                 case "material" -> material = reader.readStringValue();
                 case "name" -> displayName = reader.readStringValue();
+                case "amount" -> amount = reader.readIntValue();
                 case "lore" -> {
                     reader.readArrayStart();
                     while (reader.hasMoreValuesOrEntries()) {
@@ -54,13 +56,14 @@ public final class ItemDefinitionCodec implements DnCodec<ItemDefinition> {
         }
 
         reader.readObjectEnd();
-        return ItemDefinition.of(material, displayName, lore);
+        return ItemDefinition.of(material, displayName, amount, lore);
     }
 
     @Override
     public void encode(final @NotNull DnWriter writer, final @NotNull ItemDefinition value) {
         final String material = value.material();
         final String displayName = value.name();
+        final int amount = value.amount();
         final List<String> lore = value.lore();
 
         if (lore.isEmpty() && displayName == null) {
@@ -74,6 +77,9 @@ public final class ItemDefinitionCodec implements DnCodec<ItemDefinition> {
         writer.writeStringValue("material", material);
         if (displayName != null) {
             writer.writeStringValue("name", displayName);
+        }
+        if (amount != 1) {
+            writer.writeIntValue("amount", amount);
         }
         if (!lore.isEmpty()) {
             writer.writeArrayStart("lore");

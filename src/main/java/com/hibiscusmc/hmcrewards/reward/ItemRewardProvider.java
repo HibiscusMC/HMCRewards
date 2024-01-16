@@ -6,6 +6,8 @@ import com.hibiscusmc.hmcrewards.data.serialize.DnType;
 import com.hibiscusmc.hmcrewards.data.serialize.DnWriter;
 import com.hibiscusmc.hmcrewards.item.ItemDefinition;
 import com.hibiscusmc.hmcrewards.item.ItemMatcher;
+import me.fixeddev.commandflow.exception.CommandUsage;
+import net.kyori.adventure.text.Component;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -50,11 +52,23 @@ public final class ItemRewardProvider implements RewardProvider<ItemReward>, DnC
     }
 
     @Override
-    public @Nullable ItemReward fromCommandLine(final @NotNull String material) throws IllegalArgumentException {
+    public @Nullable ItemReward fromReference(final @NotNull String reference) throws IllegalArgumentException {
+        final String[] args = reference.split(" ", 2);
+        final String material = args[0];
+        final int amount;
+        if (args.length > 1) {
+            try {
+                amount = Integer.parseInt(args[1]);
+            } catch (final NumberFormatException e) {
+                throw new CommandUsage(Component.translatable("reward.give.invalid_amount", Component.text(args[1])));
+            }
+        } else {
+            amount = 1;
+        }
         if (itemMatcher.find(material, itemMatcher) == null) {
             return null;
         }
-        return new ItemReward(material, ItemDefinition.of(material));
+        return new ItemReward(reference, ItemDefinition.of(material, amount));
     }
 
     @Override
@@ -75,6 +89,9 @@ public final class ItemRewardProvider implements RewardProvider<ItemReward>, DnC
         writer.writeStringValue("material", value.item().material());
         if (value.item().name() != null) {
             writer.writeStringValue("name", value.item().name());
+        }
+        if (value.item().amount() != 1) {
+            writer.writeIntValue("amount", value.item().amount());
         }
         if (!value.item().lore().isEmpty()) {
             writer.writeArrayStart("lore");
@@ -110,6 +127,7 @@ public final class ItemRewardProvider implements RewardProvider<ItemReward>, DnC
         reader.readObjectStart();
         String material = null;
         String displayName = null;
+        int amount = 1;
         final List<String> lore = new ArrayList<>();
 
         while (reader.hasMoreValuesOrEntries()) {
@@ -117,6 +135,7 @@ public final class ItemRewardProvider implements RewardProvider<ItemReward>, DnC
             switch (name) {
                 case "material" -> material = reader.readStringValue();
                 case "name" -> displayName = reader.readStringValue();
+                case "amount" -> amount = reader.readIntValue();
                 case "lore" -> {
                     reader.readArrayStart();
                     while (reader.hasMoreValuesOrEntries()) {
@@ -133,6 +152,6 @@ public final class ItemRewardProvider implements RewardProvider<ItemReward>, DnC
         }
 
         reader.readObjectEnd();
-        return new ItemReward(null, ItemDefinition.of(material, displayName, lore));
+        return new ItemReward(null, ItemDefinition.of(material, displayName, amount, lore));
     }
 }

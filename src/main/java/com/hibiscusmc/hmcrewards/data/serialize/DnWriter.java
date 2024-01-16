@@ -35,6 +35,11 @@ public interface DnWriter {
         writeStringValue(value);
     }
 
+    default void writeIntValue(final @NotNull String name, final int value) {
+        writeName(name);
+        writeIntValue(value);
+    }
+
     default void writeBooleanValue(final @NotNull String name, final boolean value) {
         writeName(name);
         writeBooleanValue(value);

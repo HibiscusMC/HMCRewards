@@ -41,13 +41,7 @@ public interface RewardProvider<T extends Reward> {
      */
     @Nullable T fromConfiguration(final @NotNull ConfigurationSection section) throws IllegalArgumentException;
 
-    default @Nullable T fromReference(final @NotNull String reference) {
-        return fromCommandLine(reference);
-    }
-
-    default @Nullable T fromCommandLine(final @NotNull String string) throws IllegalArgumentException {
-        return null;
-    }
+    @Nullable T fromReference(final @NotNull String reference);
 
     enum GiveResult {
         SUCCESS,

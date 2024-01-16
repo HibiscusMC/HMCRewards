@@ -31,6 +31,7 @@ reward.invalid: '<red>Invalid reward argument: <arg> (Not found)'
 reward.queued: '<green>Queued reward for player <arg>'
 reward.give.no_space_in_inventory: '<red>Not enough space in inventory to give reward.'
 reward.give.invalid_reward: '<red>Can''t give reward as it is invalid.'
+reward.give.invalid_amount: '<red>Invalid amount: <arg>'
 reload.success: '<green>Successfully reloaded the plugin in <dark_green><arg></dark_green> ms'
 
 

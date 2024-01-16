@@ -72,7 +72,7 @@ public final class CommandRewardProvider implements RewardProvider<CommandReward
     }
 
     @Override
-    public @Nullable CommandReward fromCommandLine(final @NotNull String string) throws IllegalArgumentException {
+    public @Nullable CommandReward fromReference(final @NotNull String string) throws IllegalArgumentException {
         final ConfigurationSection section = plugin.getConfig().getConfigurationSection("rewards." + string);
         if (section == null) {
             return null;

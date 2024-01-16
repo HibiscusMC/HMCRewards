@@ -20,11 +20,13 @@ import static java.util.Objects.requireNonNull;
 public final class ItemDefinition {
     private final String material;
     private final String name;
+    private final int amount;
     private final List<String> lore;
 
-    private ItemDefinition(final @NotNull String material, final @Nullable String name, final @NotNull List<String> lore) {
+    private ItemDefinition(final @NotNull String material, final @Nullable String name, final int amount, final @NotNull List<String> lore) {
         this.material = requireNonNull(material, "material");
         this.name = name;
+        this.amount = amount;
         this.lore = requireNonNull(lore, "lore");
     }
 
@@ -36,6 +38,10 @@ public final class ItemDefinition {
         return name;
     }
 
+    public int amount() {
+        return amount;
+    }
+
     public @NotNull List<String> lore() {
         return lore;
     }
@@ -45,6 +51,11 @@ public final class ItemDefinition {
         if (item == null) {
             // this reward contains an invalid item definition
             throw new IllegalStateException("Invalid item definition, unknown material: " + material);
+        }
+
+        // set amount
+        if (amount != 1) {
+            item.setAmount(amount);
         }
 
         // set display name
@@ -66,22 +77,31 @@ public final class ItemDefinition {
     }
 
     public static @NotNull ItemDefinition of(final @NotNull String material) {
-        return new ItemDefinition(material, null, Collections.emptyList());
+        return of(material, 1);
+    }
+
+    public static @NotNull ItemDefinition of(final @NotNull String material, final int amount) {
+        return of(material, null, amount, Collections.emptyList());
     }
 
     public static @NotNull ItemDefinition of(final @NotNull String material, final @Nullable String name, final @NotNull List<String> lore) {
-        return new ItemDefinition(material, name, lore);
+        return of(material, name, 1, lore);
+    }
+
+    public static @NotNull ItemDefinition of(final @NotNull String material, final @Nullable String name, final int amount, final @NotNull List<String> lore) {
+        return new ItemDefinition(material, name, amount, lore);
     }
 
     public static @NotNull ItemDefinition deserialize(final @NotNull ConfigurationSection section) throws IllegalArgumentException {
         final String material = section.getString("material", null);
         final String name = section.getString("name", null);
+        final int amount = section.getInt("amount", 1);
         final List<String> lore = section.getStringList("lore");
 
         if (material == null) {
             throw new IllegalArgumentException("Missing 'material' property for item definition at " + section.getCurrentPath());
         }
 
-        return ItemDefinition.of(material, name, lore);
+        return ItemDefinition.of(material, name, amount, lore);
     }
 }
