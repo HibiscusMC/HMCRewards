@@ -6,9 +6,11 @@ import team.unnamed.inject.Inject;
 
 public final class HMCRewardsCommandModule extends AbstractModule {
     @Inject private RewardProviderArgument rewardProviderArgument;
+    @Inject private RewardArgument rewardArgument;
 
     @Override
     public void configure() {
         bindFactory(RewardProvider.class, rewardProviderArgument);
+        bindFactory(RewardId.class, rewardArgument);
     }
 }

@@ -17,6 +17,7 @@ import team.unnamed.inject.Named;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public final class CommandRewardProvider implements RewardProvider<CommandReward>, DnCodec<CommandReward> {
     public static final String ID = "command";
@@ -27,6 +28,10 @@ public final class CommandRewardProvider implements RewardProvider<CommandReward
     @Override
     public @NotNull String id() {
         return ID;
+    }
+
+    public @NotNull Set<String> ids() {
+        return config.getConfigurationSection("rewards").getKeys(false);
     }
 
     @Override

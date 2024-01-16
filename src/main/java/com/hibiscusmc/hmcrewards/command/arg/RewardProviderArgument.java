@@ -45,6 +45,7 @@ public final class RewardProviderArgument implements PartFactory {
             if (provider == null) {
                 return Collections.emptyList();
             } else {
+                context.setObject(RewardProvider.class, "RewardProvider", provider);
                 return Collections.singletonList(provider);
             }
         }

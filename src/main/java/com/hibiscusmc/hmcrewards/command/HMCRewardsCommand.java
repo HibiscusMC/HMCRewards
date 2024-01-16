@@ -1,5 +1,6 @@
 package com.hibiscusmc.hmcrewards.command;
 
+import com.hibiscusmc.hmcrewards.command.arg.RewardId;
 import com.hibiscusmc.hmcrewards.feedback.SoundManager;
 import com.hibiscusmc.hmcrewards.feedback.TranslationManager;
 import com.hibiscusmc.hmcrewards.menu.RewardQueueMenu;
@@ -34,7 +35,8 @@ public final class HMCRewardsCommand implements CommandClass {
 
     @Command(names = "queue", permission = "hmcrewards.command.queue")
     @SuppressWarnings("rawtypes")
-    public void queue(final @NotNull CommandSender sender, final @NotNull String targetName, final @NotNull RewardProvider provider, final @NotNull @Text String arg) {
+    public void queue(final @NotNull CommandSender sender, final @NotNull String targetName, final @NotNull RewardProvider provider, final @NotNull @Text RewardId wrappedArg) {
+        final String arg = wrappedArg.id();
         final Player target = Bukkit.getPlayerExact(targetName);
 
         if (provider.fromReference(arg) == null) {
