@@ -66,7 +66,7 @@ public final class HMCRewardsCommand implements CommandClass {
         }
 
         if (!user.hasReceivedRewardsBefore()) {
-            translationManager.send(sender, "notification.on_first_reward");
+            translationManager.send(target, "notification.on_first_reward");
             user.hasReceivedRewardsBefore(true);
         }
 
