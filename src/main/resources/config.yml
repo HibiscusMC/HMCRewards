@@ -18,6 +18,13 @@ sounds:
   # reward-bulk-claim: 'entity.player.levelup 1 1'
   # reward-bulk-claim-error: 'entity.villager.no 1 1'
 
+#
+# Commands to execute when a reward has been queued for a player
+# Useful to notify them that they have new rewards
+#
+on-reward:
+  - 'tell <player> You have new mail: <reward_display_name>'
+
 rewards:
   command_1:
     type: "command"

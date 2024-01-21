@@ -3,12 +3,16 @@ package com.hibiscusmc.hmcrewards.command;
 import com.hibiscusmc.hmcrewards.command.arg.RewardId;
 import com.hibiscusmc.hmcrewards.feedback.SoundManager;
 import com.hibiscusmc.hmcrewards.feedback.TranslationManager;
+import com.hibiscusmc.hmcrewards.item.ItemMatcher;
 import com.hibiscusmc.hmcrewards.menu.RewardQueueMenu;
+import com.hibiscusmc.hmcrewards.reward.Reward;
 import com.hibiscusmc.hmcrewards.reward.RewardProvider;
 import com.hibiscusmc.hmcrewards.user.User;
 import com.hibiscusmc.hmcrewards.user.UserManager;
 import com.hibiscusmc.hmcrewards.user.data.UserDatastore;
 import com.hibiscusmc.hmcrewards.util.ConfigurationBinder;
+import com.hibiscusmc.hmcrewards.util.GlobalMiniMessage;
+import com.hibiscusmc.hmcrewards.util.YamlFileConfiguration;
 import me.fixeddev.commandflow.annotated.CommandClass;
 import me.fixeddev.commandflow.annotated.annotation.Command;
 import me.fixeddev.commandflow.annotated.annotation.OptArg;
@@ -18,10 +22,12 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import team.unnamed.inject.Inject;
+import team.unnamed.inject.Named;
 
 @Command(names = "hmcrewards", permission = "hmcrewards.command.hmcrewards")
 public final class HMCRewardsCommand implements CommandClass {
@@ -32,14 +38,17 @@ public final class HMCRewardsCommand implements CommandClass {
     @Inject private SoundManager soundManager;
     @Inject private ConfigurationBinder configurationBinder;
     @Inject private RewardQueueMenu rewardQueueMenu;
+    @Inject private ItemMatcher itemMatcher;
+    @Inject @Named("config.yml") private YamlFileConfiguration config;
 
     @Command(names = "queue", permission = "hmcrewards.command.queue")
     @SuppressWarnings("rawtypes")
     public void queue(final @NotNull CommandSender sender, final @NotNull String targetName, final @NotNull RewardProvider provider, final @NotNull @Text RewardId wrappedArg) {
         final String arg = wrappedArg.id();
         final Player target = Bukkit.getPlayerExact(targetName);
+        final Reward reward;
 
-        if (provider.fromReference(arg) == null) {
+        if ((reward = provider.fromReference(arg)) == null) {
             translationManager.send(sender, "reward.invalid", Placeholder.component("arg", Component.text(arg)));
             return;
         }
@@ -68,6 +77,23 @@ public final class HMCRewardsCommand implements CommandClass {
         if (!user.hasReceivedRewardsBefore()) {
             translationManager.send(sender, "notification.on_first_reward");
             user.hasReceivedRewardsBefore(true);
+        }
+
+        final String rewardDisplayName;
+        {
+            // compute reward display name
+            final ItemStack item = reward.icon().build(itemMatcher);
+            final Component displayName = item.displayName();
+            rewardDisplayName = GlobalMiniMessage.get().serialize(displayName); // todo: do we need legacy?
+        }
+
+        for (final String command : config.getStringList("on-reward")) {
+            Bukkit.dispatchCommand(
+                    Bukkit.getConsoleSender(),
+                    command
+                            .replace("<player>", target.getName())
+                            .replace("<reward_display_name>",rewardDisplayName)
+            );
         }
 
         user.rewards().add(arg);
