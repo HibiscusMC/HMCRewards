@@ -32,6 +32,9 @@ reward.queued: '<green>Queued reward for player <arg>'
 reward.give.no_space_in_inventory: '<red>Not enough space in inventory to give reward.'
 reward.give.invalid_reward: '<red>Can''t give reward as it is invalid.'
 reward.give.invalid_amount: '<red>Invalid amount: <arg>'
+reward.bulk_claim.claimed: '<green>Claimed!'
+reward.bulk_claim.no_rewards: '<red>There are no rewards to claim!'
+reward.bulk_claim.cant_claim: '<red>No enough space in inventory to claim rewards!'
 reload.success: '<green>Successfully reloaded the plugin in <dark_green><arg></dark_green> ms'
 
 

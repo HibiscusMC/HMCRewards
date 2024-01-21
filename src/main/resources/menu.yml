@@ -12,9 +12,18 @@ list:
 
 # List of menu icons/buttons, you can add as many as you want
 # but there are some special ones that have actions, these are:
+#     -  bulk-claim
 #     -  previous-page
 #     -  next-page
 icons:
+  bulk-claim:
+    slots:
+      - 53
+    material: oraxen:arrow_down
+    name: '<gray>Bulk Claim'
+    lore:
+      - '<gray>Click to claim as many rewards'
+      - '<gray>as you can!'
   previous-page:
     slots:
       - 48

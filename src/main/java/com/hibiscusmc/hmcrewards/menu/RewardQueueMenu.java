@@ -27,9 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import team.unnamed.inject.Inject;
 import team.unnamed.inject.Named;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public final class RewardQueueMenu {
     @Inject private Plugin plugin;
@@ -178,6 +176,61 @@ public final class RewardQueueMenu {
                 final ItemStack icon = ItemDefinition.deserialize(iconSection).build(itemMatcher);
                 final GuiItem button = ItemBuilder.from(icon)
                         .asGuiItem(switch (key.toLowerCase()) {
+                            case "bulk-claim" -> (GuiAction<InventoryClickEvent>) (event -> {
+                                final List<String> currentRewards = user.rewards();
+                                if (currentRewards.isEmpty()) {
+                                    translationManager.send(player, "reward.bulk_claim.no_rewards");
+                                    soundManager.play(player, "reward-bulk-claim-error");
+                                    return;
+                                }
+
+                                // give all rewards
+                                boolean anyGiven = false;
+                                final ListIterator<String> rewardIterator = currentRewards.listIterator(currentRewards.size());
+                                while (rewardIterator.hasPrevious()) {
+                                    final String rewardReference = rewardIterator.previous();
+                                    final Reward reward = rewardProviderRegistry.findByReference(rewardReference);
+
+                                    if (reward == null) {
+                                        // reward not found, invalid?
+                                        plugin.getLogger().warning("Reward not found: " + rewardReference + " was tried to be given to " + player.getName() + ".");
+                                        continue;
+                                    }
+
+                                    final RewardProvider provider = rewardProviderRegistry.provider(reward.type());
+                                    if (provider == null) {
+                                        // provider not found, invalid?
+                                        plugin.getLogger().warning("Provider for reward type " + reward.type() + " not found.");
+                                        continue;
+                                    }
+
+                                    // give the reward and remove
+                                    final RewardProvider.GiveResult result = provider.give(player, reward);
+                                    if (result == RewardProvider.GiveResult.SUCCESS) {
+                                        // success giving it
+                                        soundManager.play(player, "reward-give");
+                                        rewardIterator.remove();
+                                        anyGiven = true;
+                                    }
+                                }
+
+                                if (anyGiven) {
+                                    userManager.saveAsync(user);
+                                    translationManager.send(player, "reward.bulk_claim.claimed");
+                                    soundManager.play(player, "reward-bulk-claim");
+                                    player.closeInventory();
+                                } else {
+                                    translationManager.send(player, "reward.bulk_claim.cant_claim");
+                                    soundManager.play(player, "reward-bulk-claim-error");
+                                    return;
+                                }
+
+                                // update gui
+                                if (!updateRewardIcons(player, gui, currentPage, true)) {
+                                    player.closeInventory();
+                                }
+                                event.setCancelled(true);
+                            });
                             case "next-page" -> (GuiAction<InventoryClickEvent>) (event -> {
                                 if (currentPage + 1 > maxPage) {
                                     event.setCancelled(true);
