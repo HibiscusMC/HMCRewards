@@ -1,5 +1,6 @@
 package com.hibiscusmc.hmcrewards;
 
+import com.github.retrooper.packetevents.PacketEvents;
 import com.hibiscusmc.hmcrewards.command.CommandModule;
 import com.hibiscusmc.hmcrewards.feedback.FeedbackModule;
 import com.hibiscusmc.hmcrewards.hook.HookModule;
@@ -8,6 +9,7 @@ import com.hibiscusmc.hmcrewards.reward.RewardModule;
 import com.hibiscusmc.hmcrewards.user.UserModule;
 import com.hibiscusmc.hmcrewards.util.ConfigurationBinder;
 import com.hibiscusmc.hmcrewards.util.Service;
+import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import me.lojosho.hibiscuscommons.HibiscusPlugin;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
@@ -33,7 +35,16 @@ public final class HMCRewardsPlugin extends HibiscusPlugin implements Module {
     private final Collection<AutoCloseable> resources = new HashSet<>();
 
     @Override
+    public void onLoad() {
+        final var packetEvents = SpigotPacketEventsBuilder.build(this);
+        PacketEvents.setAPI(packetEvents);
+        packetEvents.load();
+        packetEvents.getSettings().checkForUpdates(false);
+    }
+
+    @Override
     public void onStart() {
+        PacketEvents.getAPI().init();
         Injector.create(this).injectMembers(this);
 
         if (services != null) {
@@ -52,6 +63,7 @@ public final class HMCRewardsPlugin extends HibiscusPlugin implements Module {
 
     @Override
     public void onEnd() {
+        PacketEvents.getAPI().terminate();
         if (services != null) {
             for (final Service service : services) {
                 service.stop();
