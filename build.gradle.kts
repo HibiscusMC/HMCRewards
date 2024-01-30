@@ -10,7 +10,6 @@ repositories {
     maven("https://repo.unnamed.team/repository/unnamed-public/") // command-flow
     maven("https://repo.hibiscusmc.com/releases/") // HibiscusCommons
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") // PlaceholderAPI
-    maven("https://jitpack.io/") // CrazyAdvancementsAPI
     mavenCentral()
 }
 
@@ -21,11 +20,12 @@ dependencies {
     compileOnly("io.th0rgal:oraxen:1.164.0") // Oraxen
     compileOnly("me.lojosho:HibiscusCommons:0.2.4") // HibiscusCommons
     compileOnly("me.clip:placeholderapi:2.11.5") // PlaceholderAPI
-    compileOnly("com.github.ZockerAxel:CrazyAdvancementsAPI:v2.1.17a") // CrazyAdvancementsAPI
 
     implementation("team.unnamed:inject:2.0.1") // inject
     implementation("dev.triumphteam:triumph-gui:3.1.6") // triumph-gui
     implementation("net.kyori:adventure-text-serializer-bungeecord:4.3.2") // adventure-text-serializer-bungeecord
+    implementation("net.kyori:adventure-nbt:4.15.0") // adventure-nbt
+    implementation("xyz.jpenilla:reflection-remapper:0.1.0") // reflection-remapper
 
     implementation("org.mongodb:mongodb-driver-sync:4.11.1") // mongodb driver
 
@@ -60,5 +60,7 @@ tasks {
         relocate("dev.triumphteam.gui", "$pkg.triumphgui")
         relocate("com.mongodb", "$pkg.mongodb")
         relocate("org.bson", "$pkg.bson")
+        relocate("xyz.jpenilla.reflectionremapper", "$pkg.reflectionremapper")
+        relocate("net.kyori.adventure.nbt", "$pkg.adventure.nbt")
     }
 }

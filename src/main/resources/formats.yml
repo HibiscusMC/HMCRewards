@@ -24,7 +24,9 @@ notification.on_first_reward: |-
   <green>You just received your first reward!
   <green>Use <dark_green>/rewards <green>to claim it!
 
-notification.new_reward.body: '<green>Use <dark_green>/rewards</dark_green> to claim it!'
+notification.toast: |-
+  <reward_display_name>
+  <green>Use <dark_green>/rewards</dark_green> to claim it!
 
 user.not_found: '<red>Could''t find user information for <arg>'
 user.self_not_found: '<red>Could''t find your user information, try relogging'

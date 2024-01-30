@@ -11,23 +11,17 @@ import com.hibiscusmc.hmcrewards.user.User;
 import com.hibiscusmc.hmcrewards.user.UserManager;
 import com.hibiscusmc.hmcrewards.user.data.UserDatastore;
 import com.hibiscusmc.hmcrewards.util.ConfigurationBinder;
-import com.hibiscusmc.hmcrewards.util.GlobalMiniMessage;
+import com.hibiscusmc.hmcrewards.util.Toasts;
 import com.hibiscusmc.hmcrewards.util.YamlFileConfiguration;
-import eu.endercentral.crazy_advancements.JSONMessage;
-import eu.endercentral.crazy_advancements.advancement.AdvancementDisplay;
-import eu.endercentral.crazy_advancements.advancement.ToastNotification;
 import me.fixeddev.commandflow.annotated.CommandClass;
 import me.fixeddev.commandflow.annotated.annotation.Command;
 import me.fixeddev.commandflow.annotated.annotation.OptArg;
 import me.fixeddev.commandflow.annotated.annotation.Text;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -85,19 +79,9 @@ public final class HMCRewardsCommand implements CommandClass {
         }
 
         final var icon = reward.icon().build(itemMatcher);
-        //noinspection deprecation
-        final var notification = new ToastNotification(
-                icon,
-                new JSONMessage(new TextComponent(BungeeComponentSerializer.get().serialize(
-                        Component.text()
-                                .append(icon.displayName())
-                                .appendNewline()
-                                .append(translationManager.getOrDefaultToKey(""))
-                                .build()
-                ))),
-                AdvancementDisplay.AdvancementFrame.TASK
-        );
-        notification.send(target);
+
+        Toasts.showToast(target, icon, translationManager.getOrDefaultToKey("notification.toast",
+                Placeholder.component("reward_display_name", icon.displayName())));
 
         user.rewards().add(arg);
         userManager.saveAsync(user);
