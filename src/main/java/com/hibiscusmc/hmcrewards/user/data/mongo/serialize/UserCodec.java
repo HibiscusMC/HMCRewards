@@ -37,7 +37,7 @@ public final class UserCodec implements DnCodec<User> {
                     rewards.add(reader.readStringValue());
                 }
                 reader.readArrayEnd();
-            } else if (prop.equals("hasReceivedRewardsBefore")) {
+            } else if (prop.equals("hasClaimedRewardsBefore")) {
                 hasReceivedRewardsBefore = reader.readBooleanValue();
             } else {
                 reader.skipValue();
