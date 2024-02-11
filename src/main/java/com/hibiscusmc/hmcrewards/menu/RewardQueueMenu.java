@@ -111,7 +111,7 @@ public final class RewardQueueMenu {
                         
                         if (currentRewards.equals(rewards)) {
                             // no changes
-                            index = rewardOriginalIndex;
+                            index = startIndex + rewardOriginalIndex;
                         } else {
                             // something changed, find the index
                             // (This may cause inconsistencies, by giving the first
