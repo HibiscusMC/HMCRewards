@@ -16,6 +16,7 @@ import com.hibiscusmc.hmcrewards.util.YamlFileConfiguration;
 import me.fixeddev.commandflow.annotated.CommandClass;
 import me.fixeddev.commandflow.annotated.annotation.Command;
 import me.fixeddev.commandflow.annotated.annotation.OptArg;
+import me.fixeddev.commandflow.annotated.annotation.Switch;
 import me.fixeddev.commandflow.annotated.annotation.Text;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -42,7 +43,7 @@ public final class HMCRewardsCommand implements CommandClass {
 
     @Command(names = "queue", permission = "hmcrewards.command.queue")
     @SuppressWarnings("rawtypes")
-    public void queue(final @NotNull CommandSender sender, final @NotNull String targetName, final @NotNull RewardProvider provider, final @NotNull @Text RewardId wrappedArg) {
+    public void queue(final @NotNull CommandSender sender, final @NotNull String targetName, final @NotNull RewardProvider provider, final @NotNull @Text RewardId wrappedArg, final @Switch(value = "f") boolean tryForceGive) {
         final String arg = wrappedArg.id();
         final Player target = Bukkit.getPlayerExact(targetName);
         final Reward reward;
@@ -71,6 +72,18 @@ public final class HMCRewardsCommand implements CommandClass {
         if (user == null) {
             translationManager.send(sender, "user.not_found", Placeholder.component("arg", target.displayName()));
             return;
+        }
+
+        if (tryForceGive) {
+            // Try give if '-f' flag specified, if not, queue
+            // as always
+            //noinspection unchecked
+            final var result = provider.give(target, reward);
+
+            if (result == RewardProvider.GiveResult.SUCCESS) {
+                translationManager.send(sender, "reward.queued", Placeholder.component("arg", target.displayName()));
+                return;
+            }
         }
 
         if (!user.hasReceivedRewardsBefore()) {
