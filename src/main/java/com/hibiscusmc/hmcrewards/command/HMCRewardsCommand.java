@@ -43,7 +43,7 @@ public final class HMCRewardsCommand implements CommandClass {
 
     @Command(names = "queue", permission = "hmcrewards.command.queue")
     @SuppressWarnings("rawtypes")
-    public void queue(final @NotNull CommandSender sender, final @NotNull String targetName, final @NotNull RewardProvider provider, final @Switch(value = "f") boolean tryForceGive, final @NotNull @Text RewardId wrappedArg) {
+    public void queue(final @NotNull CommandSender sender, final @Switch(value = "f") boolean tryForceGive, final @NotNull String targetName, final @NotNull RewardProvider provider, final @NotNull @Text RewardId wrappedArg) {
         final String arg = wrappedArg.id();
         final Player target = Bukkit.getPlayerExact(targetName);
         final Reward reward;
