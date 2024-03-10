@@ -1,5 +1,5 @@
 data:
-  store: 'mongodb' # yaml, mongodb
+  store: 'json' # json, mongodb
 
   # only fill if store=mongodb
   mongodb: # mongodb connection

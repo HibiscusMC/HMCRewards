@@ -3,6 +3,7 @@ package com.hibiscusmc.hmcrewards.user.data;
 import com.hibiscusmc.hmcrewards.HMCRewardsPlugin;
 import com.hibiscusmc.hmcrewards.reward.RewardProviderRegistry;
 import com.hibiscusmc.hmcrewards.user.data.mongo.MongoUserDatastore;
+import com.hibiscusmc.hmcrewards.user.data.yaml.JsonUserDatastore;
 import com.hibiscusmc.hmcrewards.util.YamlFileConfiguration;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -44,6 +45,9 @@ public final class UserDatastoreProvider implements Provider<UserDatastore> {
 
                 final MongoDatabase database = client.getDatabase(requireNonNull(section.getString("mongodb.database"), "'database' not specified for mongodb datastore."));
                 return new MongoUserDatastore(database, rewardProviderRegistry);
+            }
+            case "json": {
+                return new JsonUserDatastore(plugin.getDataFolder().toPath().resolve("userdata"));
             }
             default: {
                 throw new IllegalArgumentException("Unsupported datastore type: " + type);
