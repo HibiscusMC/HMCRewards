@@ -29,6 +29,8 @@ import org.jetbrains.annotations.Nullable;
 import team.unnamed.inject.Inject;
 import team.unnamed.inject.Named;
 
+import java.util.HashSet;
+
 @Command(names = "hmcrewards", permission = "hmcrewards.command.hmcrewards")
 public final class HMCRewardsCommand implements CommandClass {
     @Inject private Plugin plugin;
@@ -45,7 +47,6 @@ public final class HMCRewardsCommand implements CommandClass {
     @SuppressWarnings("rawtypes")
     public void queue(final @NotNull CommandSender sender, final @Switch(value = "f") boolean tryForceGive, final @NotNull String targetName, final @NotNull RewardProvider provider, final @NotNull @Text RewardId wrappedArg) {
         final String arg = wrappedArg.id();
-        final Player target = Bukkit.getPlayerExact(targetName);
         final Reward reward;
 
         if ((reward = provider.fromReference(arg)) == null) {
@@ -53,52 +54,82 @@ public final class HMCRewardsCommand implements CommandClass {
             return;
         }
 
-        if (target == null) {
-            // queue offline?
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-                final User user = userDatastore.findByUsername(targetName);
-                if (user == null) {
-                    translationManager.send(sender, "user.not_found", Placeholder.component("arg", Component.text(targetName)));
-                    return;
-                }
-                user.rewards().add(arg);
-                userDatastore.save(user);
-                translationManager.send(sender, "reward.queued", Placeholder.component("arg", Component.text(targetName)));
-            });
-            return;
+        final var icon = reward.icon().build(itemMatcher);
+        final Component rewardDisplayName;
+        if (icon.hasItemMeta()) {
+            final var meta = icon.getItemMeta();
+            if (meta.hasDisplayName()) {
+                rewardDisplayName = meta.displayName();
+                assert rewardDisplayName != null;
+            } else {
+                rewardDisplayName = Component.translatable(icon);
+            }
+        } else {
+            rewardDisplayName = Component.translatable(icon);
         }
 
-        final User user = userManager.getCached(target);
-        if (user == null) {
-            translationManager.send(sender, "user.not_found", Placeholder.component("arg", target.displayName()));
-            return;
-        }
-
-        if (tryForceGive) {
-            // Try give if '-f' flag specified, if not, queue
-            // as always
-            //noinspection unchecked
-            final var result = provider.give(target, reward);
-
-            if (result == RewardProvider.GiveResult.SUCCESS) {
-                translationManager.send(sender, "reward.queued", Placeholder.component("arg", target.displayName()));
+        final var targets = new HashSet<Player>();
+        if (targetName.equalsIgnoreCase("@a") || targetName.equalsIgnoreCase("@e")) {
+            // For all online players
+            targets.addAll(Bukkit.getOnlinePlayers());
+        } else {
+            final Player target = Bukkit.getPlayerExact(targetName);
+            if (target == null) {
+                // queue offline
+                Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                    final User user = userDatastore.findByUsername(targetName);
+                    if (user == null) {
+                        translationManager.send(sender, "user.not_found", Placeholder.component("arg", Component.text(targetName)));
+                        return;
+                    }
+                    user.rewards().add(arg);
+                    userDatastore.save(user);
+                    translationManager.send(sender, "reward.queued", Placeholder.component("arg", Component.text(targetName)));
+                });
                 return;
+            } else {
+                // Single target
+                targets.add(target);
             }
         }
 
-        if (!user.hasReceivedRewardsBefore()) {
-            translationManager.send(target, "notification.on_first_reward");
-            user.hasReceivedRewardsBefore(true);
+        for (final var target : targets) {
+            final User user = userManager.getCached(target);
+            if (user == null) {
+                translationManager.send(sender, "user.not_found", Placeholder.component("arg", target.displayName()));
+                continue;
+            }
+
+            if (tryForceGive) {
+                // Try give if '-f' flag specified, if not, queue
+                // as always
+                //noinspection unchecked
+                final var result = provider.give(target, reward);
+
+                if (result == RewardProvider.GiveResult.SUCCESS) {
+                    continue;
+                }
+            }
+
+            if (!user.hasReceivedRewardsBefore()) {
+                translationManager.send(target, "notification.on_first_reward");
+                user.hasReceivedRewardsBefore(true);
+            }
+
+            Toasts.showToast(target, icon, translationManager.getOrDefaultToKey("notification.toast",
+                    Placeholder.component("reward_display_name", rewardDisplayName)));
+
+            user.rewards().add(arg);
+            userManager.saveAsync(user);
         }
 
-        final var icon = reward.icon().build(itemMatcher);
-
-        Toasts.showToast(target, icon, translationManager.getOrDefaultToKey("notification.toast",
-                Placeholder.component("reward_display_name", icon.displayName())));
-
-        user.rewards().add(arg);
-        userManager.saveAsync(user);
-        translationManager.send(sender, "reward.queued", Placeholder.component("arg", target.displayName()));
+        if (targets.size() == 1) {
+            final var target = targets.iterator().next();
+            translationManager.send(sender, "reward.queued", Placeholder.component("arg", target.displayName()));
+        } else {
+            translationManager.send(sender, "reward.queued_multiple",
+                    Placeholder.component("players", Component.text(targets.size())));
+        }
     }
 
     @Command(names = { "", "menu" }, permission = "hmcrewards.command.menu")
