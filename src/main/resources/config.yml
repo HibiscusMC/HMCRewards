@@ -6,6 +6,9 @@ data:
     uri: 'mongodb://localhost:27017'
     database: 'hmcrewards'
 
+toasts:
+  enabled: true
+
 # configure the used sounds, the format is:
 #    <type> [volume] [pitch]
 # the type must be Minecraft's sound name, check

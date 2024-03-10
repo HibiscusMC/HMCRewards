@@ -67,6 +67,7 @@ public final class HMCRewardsCommand implements CommandClass {
         } else {
             rewardDisplayName = Component.translatable(icon);
         }
+        final var showToast = config.getBoolean("toasts.enabled");
 
         final var targets = new HashSet<Player>();
         if (targetName.equalsIgnoreCase("@a") || targetName.equalsIgnoreCase("@e")) {
@@ -116,8 +117,10 @@ public final class HMCRewardsCommand implements CommandClass {
                 user.hasReceivedRewardsBefore(true);
             }
 
-            Toasts.showToast(target, icon, translationManager.getOrDefaultToKey("notification.toast",
-                    Placeholder.component("reward_display_name", rewardDisplayName)));
+            if (showToast) {
+                Toasts.showToast(target, icon, translationManager.getOrDefaultToKey("notification.toast",
+                        Placeholder.component("reward_display_name", rewardDisplayName)));
+            }
 
             user.rewards().add(arg);
             userManager.saveAsync(user);
