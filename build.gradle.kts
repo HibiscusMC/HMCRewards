@@ -46,6 +46,7 @@ java {
 tasks {
     runServer {
         downloadPlugins {
+            github("dmulloy2", "ProtocolLib", "5.1.0", "ProtocolLib.jar")
             url("https://repo.hibiscusmc.com/releases/me/lojosho/HibiscusCommons/0.2.6/HibiscusCommons-0.2.6-all.jar")
         }
         minecraftVersion("1.20.4")
