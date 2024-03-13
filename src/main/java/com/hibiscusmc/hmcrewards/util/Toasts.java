@@ -2,6 +2,9 @@ package com.hibiscusmc.hmcrewards.util;
 
 import com.google.gson.JsonObject;
 import com.hibiscusmc.hmcrewards.HMCRewardsPlugin;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.JsonOps;
+import io.papermc.lib.PaperLib;
 import net.kyori.adventure.nbt.BinaryTagTypes;
 import net.kyori.adventure.nbt.CompoundBinaryTag;
 import net.kyori.adventure.nbt.ListBinaryTag;
@@ -12,6 +15,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import xyz.jpenilla.reflectionremapper.ReflectionRemapper;
 
 import java.io.IOException;
@@ -22,6 +26,9 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
+
+import static com.hibiscusmc.hmcrewards.util.Expressions.lazy;
 
 // Toasts 1.20.2+
 public final class Toasts {
@@ -48,13 +55,16 @@ public final class Toasts {
     private static final Method MINECRAFT_SERVER_GET_PREDICATE_MANAGER_METHOD = MinecraftReflect.findMethod(MINECRAFT_SERVER_CLASS, PREDICATE_MANAGER_CLASS);
 
     // LootDeserializationContext
-    private static final Class<?> LOOT_DESERIALIZATION_CONTEXT_CLASS = MinecraftReflect.find("net.minecraft.advancements.critereon.LootDeserializationContext", "net.minecraft.advancements.critereon.DeserializationContext");
+    private static final Supplier<Class<?>> LOOT_DESERIALIZATION_CONTEXT_CLASS = lazy(() ->
+            MinecraftReflect.find("net.minecraft.advancements.critereon.LootDeserializationContext", "net.minecraft.advancements.critereon.DeserializationContext"));
 
     // LootDeserializationContext(ResourceLocation, PredicateManager)
-    private static final Constructor<?> LOOT_DESERIALIZATION_CONTEXT_CONSTRUCTOR = MinecraftReflect.getConstructor(LOOT_DESERIALIZATION_CONTEXT_CLASS, RESOURCE_LOCATION_CLASS, PREDICATE_MANAGER_CLASS);
+    private static final Supplier<Constructor<?>> LOOT_DESERIALIZATION_CONTEXT_CONSTRUCTOR = lazy(() ->
+            MinecraftReflect.getConstructor(LOOT_DESERIALIZATION_CONTEXT_CLASS.get(), RESOURCE_LOCATION_CLASS, PREDICATE_MANAGER_CLASS));
 
     // Advancement.fromJson(JsonObject, LootDeserializationContext)
-    private static final Method ADVANCEMENT_FROM_JSON_METHOD = MinecraftReflect.findMethod(ADVANCEMENT_CLASS, ADVANCEMENT_CLASS, JsonObject.class,  LOOT_DESERIALIZATION_CONTEXT_CLASS);
+    private static final Supplier<Method> ADVANCEMENT_FROM_JSON_METHOD = lazy(() ->
+            MinecraftReflect.findMethod(ADVANCEMENT_CLASS, ADVANCEMENT_CLASS, JsonObject.class,  LOOT_DESERIALIZATION_CONTEXT_CLASS.get()));
 
     // AdvancementHolder
     private static final Class<?> ADVANCEMENT_HOLDER_CLASS = MinecraftReflect.find("net.minecraft.advancements.AdvancementHolder");
@@ -105,6 +115,22 @@ public final class Toasts {
     private static final Method PLAYER_ADVANCEMENTS_REVOKE_METHOD = MinecraftReflect.getMethod(PLAYER_ADVANCEMENTS_CLASS, REMAPPER.remapMethodName(PLAYER_ADVANCEMENTS_CLASS, "revoke", ADVANCEMENT_HOLDER_CLASS, String.class), ADVANCEMENT_HOLDER_CLASS, String.class);
     private static final Method ADVANCEMENT_PROGRESS_GET_REMAINING_CRITERIA_METHOD = MinecraftReflect.getMethod(ADVANCEMENT_PROGRESS_CLASS, REMAPPER.remapMethodName(ADVANCEMENT_PROGRESS_CLASS, "getRemainingCriteria"));
     private static final Method ADVANCEMENT_PROGRESS_GET_COMPLETED_CRITERIA_METHOD = MinecraftReflect.getMethod(ADVANCEMENT_PROGRESS_CLASS, REMAPPER.remapMethodName(ADVANCEMENT_PROGRESS_CLASS, "getCompletedCriteria"));
+
+    private static final @Nullable Codec<?> ADVANCEMENT_CODEC;
+
+    static {
+        final var version = PaperLib.getMinecraftVersion();
+        final var patch = PaperLib.getMinecraftPatchVersion();
+
+        if (version > 20 || (version == 20 && patch >= 4)) {
+            ADVANCEMENT_CODEC = MinecraftReflect.getStaticField(
+                    ADVANCEMENT_CLASS,
+                    REMAPPER.remapFieldName(ADVANCEMENT_CLASS, "CODEC")
+            );
+        } else {
+            ADVANCEMENT_CODEC = null;
+        }
+    }
 
     public static void showToast(final @NotNull Player player, final @NotNull ItemStack icon, final @NotNull Component title) {
         try {
@@ -175,23 +201,25 @@ public final class Toasts {
         // MinecraftServer.getServer()
         final var minecraftServer = MINECRAFT_SERVER_GET_SERVER_METHOD.invoke(null);
 
-        // final var advancement = new AdvancementHolder(resourceLocation, Advancement.fromJson(
-        //     json,
-        //     new LootDeserializationContext(resourceLocation, minecraftServer.getPredicateManager())
-        // ));
-        final var advancement = ADVANCEMENT_HOLDER_CONSTRUCTOR.newInstance(resourceLocation, ADVANCEMENT_FROM_JSON_METHOD.invoke(null, json, LOOT_DESERIALIZATION_CONTEXT_CONSTRUCTOR.newInstance(resourceLocation, MINECRAFT_SERVER_GET_PREDICATE_MANAGER_METHOD.invoke(minecraftServer))));
+        final Object advancement;
+        if (ADVANCEMENT_CODEC == null) {
+            advancement = ADVANCEMENT_FROM_JSON_METHOD.get().invoke(null, json, LOOT_DESERIALIZATION_CONTEXT_CONSTRUCTOR.get().newInstance(resourceLocation, MINECRAFT_SERVER_GET_PREDICATE_MANAGER_METHOD.invoke(minecraftServer)));
+        } else {
+            advancement = ADVANCEMENT_CODEC.parse(JsonOps.INSTANCE, json).result().orElseThrow(IllegalStateException::new);
+        }
+        final Object advancementHolder = ADVANCEMENT_HOLDER_CONSTRUCTOR.newInstance(resourceLocation, advancement);
 
         // ----- Display ----
         // minecraftServer.getAdvancements().tree().addAll(Collections.singleton(advancement));
-        ADVANCEMENT_TREE_ADD_ALL_METHOD.invoke(SERVER_ADVANCEMENT_MANAGER_TREE_METHOD.invoke(MINECRAFT_SERVER_GET_ADVANCEMENTS_METHOD.invoke(minecraftServer)), Collections.singleton(advancement));
+        ADVANCEMENT_TREE_ADD_ALL_METHOD.invoke(SERVER_ADVANCEMENT_MANAGER_TREE_METHOD.invoke(MINECRAFT_SERVER_GET_ADVANCEMENTS_METHOD.invoke(minecraftServer)), Collections.singleton(advancementHolder));
 
         // Grant
         final var serverPlayer = CRAFT_PLAYER_GET_HANDLE_METHOD.invoke(player);
         final var playerAdvancements = SERVER_PLAYER_GET_ADVANCEMENTS_METHOD.invoke(serverPlayer);
-        final var advancementProgress = PLAYER_ADVANCEMENTS_GET_PROGRESS_METHOD.invoke(playerAdvancements, advancement);
+        final var advancementProgress = PLAYER_ADVANCEMENTS_GET_PROGRESS_METHOD.invoke(playerAdvancements, advancementHolder);
 
         for (final var it : (Iterable<?>) ADVANCEMENT_PROGRESS_GET_REMAINING_CRITERIA_METHOD.invoke(advancementProgress)) {
-            PLAYER_ADVANCEMENTS_AWARD_METHOD.invoke(playerAdvancements, advancement, it);
+            PLAYER_ADVANCEMENTS_AWARD_METHOD.invoke(playerAdvancements, advancementHolder, it);
         }
 
         final var plugin = HMCRewardsPlugin.getPlugin(HMCRewardsPlugin.class);
@@ -199,7 +227,7 @@ public final class Toasts {
             // Revoke
             try {
                 for (final var it : (Iterable<?>) ADVANCEMENT_PROGRESS_GET_COMPLETED_CRITERIA_METHOD.invoke(advancementProgress)) {
-                    PLAYER_ADVANCEMENTS_REVOKE_METHOD.invoke(playerAdvancements, advancement, it);
+                    PLAYER_ADVANCEMENTS_REVOKE_METHOD.invoke(playerAdvancements, advancementHolder, it);
                 }
 
                 // Remove

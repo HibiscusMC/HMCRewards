@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -38,6 +39,22 @@ public final class MinecraftReflect {
             return clazz.getMethod(name, parameterTypes);
         } catch (final NoSuchMethodException e) {
             throw new IllegalStateException("Could not find method for " + clazz.getName() + " with name " + name + " and parameter types: " + Arrays.stream(parameterTypes).map(Object::toString).collect(Collectors.joining(", ")), e);
+        }
+    }
+
+    public static @NotNull Field getField(final @NotNull Class<?> clazz, final @NotNull String name) {
+        try {
+            return clazz.getField(name);
+        } catch (final NoSuchFieldException e) {
+            throw new IllegalStateException("Could not find field for " + clazz.getName() + " with name " + name, e);
+        }
+    }
+
+    public static <T> @NotNull T getStaticField(final @NotNull Class<?> clazz, final @NotNull String name) {
+        try {
+            return (T) clazz.getField(name).get(null);
+        } catch (final NoSuchFieldException | IllegalAccessException e) {
+            throw new IllegalStateException("Could not get static field for " + clazz.getName() + " with name " + name, e);
         }
     }
 
