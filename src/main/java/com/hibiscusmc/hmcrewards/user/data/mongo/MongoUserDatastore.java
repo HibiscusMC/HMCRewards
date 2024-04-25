@@ -4,7 +4,7 @@ import com.hibiscusmc.hmcrewards.data.serialize.bson.BsonCodecAdapter;
 import com.hibiscusmc.hmcrewards.reward.RewardProviderRegistry;
 import com.hibiscusmc.hmcrewards.user.User;
 import com.hibiscusmc.hmcrewards.user.data.UserDatastore;
-import com.hibiscusmc.hmcrewards.user.data.mongo.serialize.UserCodec;
+import com.hibiscusmc.hmcrewards.user.data.serialize.UserCodec;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;

@@ -1,6 +1,6 @@
 main: com.hibiscusmc.hmcrewards.HMCRewardsPlugin
 name: HMCRewards
-version: 0.1.0
+version: ${project.version}
 api-version: 1.20
 depend: [ HibiscusCommons ]
 softdepend:

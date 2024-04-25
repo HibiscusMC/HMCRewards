@@ -33,6 +33,7 @@ user.self_not_found: '<red>Could''t find your user information, try relogging'
 
 reward.invalid: '<red>Invalid reward argument: <arg> (Not found)'
 reward.queued: '<green>Queued reward for player <arg>'
+reward.queued_multiple: '<green>Queued reward for <players> online players'
 reward.give.no_space_in_inventory: '<red>Not enough space in inventory to give reward.'
 reward.give.invalid_reward: '<red>Can''t give reward as it is invalid.'
 reward.give.invalid_amount: '<red>Invalid amount: <arg>'

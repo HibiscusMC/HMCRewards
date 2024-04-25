@@ -1,10 +1,13 @@
 data:
-  store: 'mongodb' # yaml, mongodb
+  store: 'json' # json, mongodb
 
   # only fill if store=mongodb
   mongodb: # mongodb connection
     uri: 'mongodb://localhost:27017'
     database: 'hmcrewards'
+
+toasts:
+  enabled: true
 
 # configure the used sounds, the format is:
 #    <type> [volume] [pitch]
