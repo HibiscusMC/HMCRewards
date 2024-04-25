@@ -22,12 +22,14 @@ public final class ItemDefinition {
     private final String name;
     private final int amount;
     private final List<String> lore;
+    private final int customModelData;
 
-    private ItemDefinition(final @NotNull String material, final @Nullable String name, final int amount, final @NotNull List<String> lore) {
+    private ItemDefinition(final @NotNull String material, final @Nullable String name, final int amount, final @NotNull List<String> lore, final int customModelData) {
         this.material = requireNonNull(material, "material");
         this.name = name;
         this.amount = amount;
         this.lore = requireNonNull(lore, "lore");
+        this.customModelData = customModelData;
     }
 
     public @NotNull String material() {
@@ -73,6 +75,10 @@ public final class ItemDefinition {
             item.editMeta(meta -> meta.lore(displayLore));
         }
 
+        if (customModelData > 0) {
+            item.editMeta(meta -> meta.setCustomModelData(customModelData));
+        }
+
         return item;
     }
 
@@ -89,7 +95,11 @@ public final class ItemDefinition {
     }
 
     public static @NotNull ItemDefinition of(final @NotNull String material, final @Nullable String name, final int amount, final @NotNull List<String> lore) {
-        return new ItemDefinition(material, name, amount, lore);
+        return of(material, name, amount, lore, -1);
+    }
+
+    public static @NotNull ItemDefinition of(final @NotNull String material, final @Nullable String name, final int amount, final @NotNull List<String> lore, final int customModelData) {
+        return new ItemDefinition(material, name, amount, lore, customModelData);
     }
 
     public static @NotNull ItemDefinition deserialize(final @NotNull ConfigurationSection section) throws IllegalArgumentException {
@@ -97,11 +107,12 @@ public final class ItemDefinition {
         final String name = section.getString("name", null);
         final int amount = section.getInt("amount", 1);
         final List<String> lore = section.getStringList("lore");
+        final int customModelData = section.getInt("custom-model-data", -1);
 
         if (material == null) {
             throw new IllegalArgumentException("Missing 'material' property for item definition at " + section.getCurrentPath());
         }
 
-        return ItemDefinition.of(material, name, amount, lore);
+        return ItemDefinition.of(material, name, amount, lore, customModelData);
     }
 }
