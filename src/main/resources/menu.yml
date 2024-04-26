@@ -1,5 +1,5 @@
 # The menu title
-title: '<gray>HMCRewards Menu'
+title: '<white>'
 
 # How many rows the menu should have
 rows: 6
@@ -19,7 +19,8 @@ icons:
   bulk-claim:
     slots:
       - 53
-    material: oraxen:amethyst
+    material: PAPER
+    custom-model-data: 3
     name: '<gray>Bulk Claim'
     lore:
       - '<gray>Click to claim as many rewards'
@@ -27,7 +28,8 @@ icons:
   previous-page:
     slots:
       - 48
-    material: oraxen:arrow_previous_icon
+    material: PAPER
+    custom-model-data: 1
     name: '<gray>Previous Page'
     lore:
       - '<gray>Click to go to the previous page'
@@ -35,7 +37,8 @@ icons:
   next-page:
     slots:
       - 50
-    material: oraxen:arrow_next_icon
+    material: PAPER
+    custom-model-data: 2
     name: '<gray>Next Page'
     lore:
       - '<gray>Click to go to the next page'
