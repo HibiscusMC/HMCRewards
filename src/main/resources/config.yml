@@ -16,13 +16,13 @@ toasts:
 # Also note that sounds are optional, you can just remove
 # one and it will not play
 sounds:
-  # reward-give: 'entity.player.levelup 1 1'        (yusshu note: not sure if these sounds exists, copilot wrote them)
+  # reward-give: 'entity.player.levelup 1 1'
   # reward-give-error: 'entity.villager.no 1 1'
   # reward-bulk-claim: 'entity.player.levelup 1 1'
   # reward-bulk-claim-error: 'entity.villager.no 1 1'
 
 rewards:
-  command_1:
+  example_command:
     type: "command"
 
     # Required Inventory Slots for claiming
@@ -30,19 +30,18 @@ rewards:
 
     # icon
     display:
-      material: 'oraxen:item_xyz'
-      name: '<red>Command Reward'
+      material: 'PAPER'
+      custom-model-data: 3
+      name: '<red>Example Command Reward'
       lore:
-        - '<dark_gray>??????'
+        - '<#d24c9f><bold>Contains:'
+        - '<dark_gray>x1 <aqua>Diamond'
+        - '<dark_gray>x1 <gold>Enchanted Golden Apple'
+        - '<dark_gray>x1 <green>Emerald'
 
     # Commands to deliver to player
     commands:
-      - 'mm i give %player% item_1'
-      - 'mm i give %player% item_2'
-      - 'mm i give %player% item_3'
-
-  item_1:
-    material: 'oraxen:item_xyz'
-    name: '<red>Item Reward'
-    lore:
-      - '<dark_gray>??????'
+      - 'say %player% claimed a command reward from HMCRewards!'
+      - 'minecraft:give %player% minecraft:diamond 1'
+      - 'minecraft:give %player% minecraft:enchanted_golden_apple 1'
+      - 'minecraft:give %player% minecraft:emerald 1'
