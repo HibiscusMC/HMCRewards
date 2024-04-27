@@ -10,6 +10,7 @@ import com.hibiscusmc.hmcrewards.reward.RewardProviderRegistry;
 import com.hibiscusmc.hmcrewards.user.User;
 import com.hibiscusmc.hmcrewards.user.UserManager;
 import com.hibiscusmc.hmcrewards.util.GlobalMiniMessage;
+import com.hibiscusmc.hmcrewards.util.OptionalPlaceholderAPI;
 import com.hibiscusmc.hmcrewards.util.YamlFileConfiguration;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.components.GuiAction;
@@ -40,7 +41,7 @@ public final class RewardQueueMenu {
 
     public void open(final @NotNull Player player, final int page) {
         final Gui gui = Gui.gui()
-                .title(GlobalMiniMessage.deserialize(config.getString("title", "")))
+                .title(GlobalMiniMessage.deserialize(OptionalPlaceholderAPI.setPlaceholders(player, config.getString("title", ""))))
                 .rows(config.getInt("rows", 6))
                 .disableAllInteractions()
                 .create();
