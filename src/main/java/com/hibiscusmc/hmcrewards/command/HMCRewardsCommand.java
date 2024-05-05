@@ -31,7 +31,7 @@ import team.unnamed.inject.Named;
 
 import java.util.HashSet;
 
-@Command(names = "hmcrewards", permission = "hmcrewards.command.hmcrewards")
+@Command(names = { "hmcrewards", "rewards" }, permission = "hmcrewards.command.hmcrewards")
 public final class HMCRewardsCommand implements CommandClass {
     @Inject private Plugin plugin;
     @Inject private UserManager userManager;
