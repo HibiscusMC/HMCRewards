@@ -52,7 +52,7 @@ public final class ItemRewardProvider implements RewardProvider<ItemReward>, DnC
     }
 
     @Override
-    public @Nullable ItemReward fromReference(final @NotNull String reference) throws IllegalArgumentException {
+    public @NotNull List<ItemReward> fromReference(final @NotNull String reference) throws IllegalArgumentException {
         final String[] args = reference.split(" ", 2);
         final String material = args[0];
         final int amount;
@@ -65,10 +65,23 @@ public final class ItemRewardProvider implements RewardProvider<ItemReward>, DnC
         } else {
             amount = 1;
         }
-        if (itemMatcher.find(material, itemMatcher) == null) {
-            return null;
+        final ItemStack item;
+        if ((item = itemMatcher.find(material, itemMatcher)) == null) {
+            return List.of();
         }
-        return new ItemReward(reference, ItemDefinition.of(material, amount));
+        final var maxStackSize = item.getMaxStackSize();
+        if (amount <= maxStackSize) {
+            return List.of(new ItemReward(reference, ItemDefinition.of(material, amount)));
+        } else {
+            // Split the amount into multiple rewards if it exceeds the max stack size
+            final var rewards = new ArrayList<ItemReward>();
+            for (int i = 0; i < amount; i += maxStackSize) {
+                final var remaining = amount - i;
+                final var currentAmount = Math.min(remaining, maxStackSize);
+                rewards.add(new ItemReward(material + " " + currentAmount, ItemDefinition.of(material, currentAmount)));
+            }
+            return rewards;
+        }
     }
 
     @Override
@@ -144,11 +157,13 @@ public final class ItemRewardProvider implements RewardProvider<ItemReward>, DnC
         // }
         if (reader.readType() == DnType.VALUE) {
             final String reference = reader.readStringValue();
-            final ItemReward reward = fromReference(reference);
-            if (reward == null) {
+            final List<ItemReward> rewards = fromReference(reference);
+            if (rewards.isEmpty()) {
                 throw new IllegalStateException("Unknown item reward reference: " + reference);
+            } else if (rewards.size() != 1) {
+                // todo: warn!!
             }
-            return reward;
+            return rewards.get(0);
         }
 
         reader.readObjectStart();

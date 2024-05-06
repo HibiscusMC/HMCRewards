@@ -6,6 +6,8 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 /**
  * Represents a reward provider. A "type" of rewards. For example,
  * there are default reward providers that provide Minecraft items,
@@ -41,7 +43,7 @@ public interface RewardProvider<T extends Reward> {
      */
     @Nullable T fromConfiguration(final @NotNull ConfigurationSection section) throws IllegalArgumentException;
 
-    @Nullable T fromReference(final @NotNull String reference);
+    @NotNull List<T> fromReference(final @NotNull String reference);
 
     /**
      * Tries to stack the given rewards. If the rewards

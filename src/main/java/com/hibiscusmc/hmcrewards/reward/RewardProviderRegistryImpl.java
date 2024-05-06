@@ -6,6 +6,7 @@ import team.unnamed.inject.Inject;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
@@ -20,14 +21,14 @@ final class RewardProviderRegistryImpl implements RewardProviderRegistry {
     }
 
     @Override
-    public @Nullable Reward findByReference(final @NotNull String rewardRef) {
-        for (final RewardProvider<?> provider : providers.values()) {
-            final Reward reward = provider.fromReference(rewardRef);
-            if (reward != null) {
-                return reward;
+    public @NotNull List<? extends Reward> findByReference(final @NotNull String rewardRef) {
+        for (final var provider : providers.values()) {
+            final var rewards = provider.fromReference(rewardRef);
+            if (rewards.isEmpty()) {
+                return rewards;
             }
         }
-        return null;
+        return List.of();
     }
 
     @Override

@@ -80,18 +80,18 @@ public final class CommandRewardProvider implements RewardProvider<CommandReward
     }
 
     @Override
-    public @Nullable CommandReward fromReference(final @NotNull String string) throws IllegalArgumentException {
+    public @NotNull List<CommandReward> fromReference(final @NotNull String string) throws IllegalArgumentException {
         final ConfigurationSection section = config.getConfigurationSection("rewards." + string);
         if (section == null) {
-            return null;
+            return List.of();
         }
 
         if (!"command".equals(section.getString("type"))) {
             // given a different type of reward
-            return null;
+            return List.of();
         }
 
-        return fromConfiguration(section);
+        return List.of(fromConfiguration(section));
     }
 
     @Override

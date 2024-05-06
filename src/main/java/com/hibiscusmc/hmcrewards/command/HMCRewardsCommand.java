@@ -29,7 +29,9 @@ import org.jetbrains.annotations.Nullable;
 import team.unnamed.inject.Inject;
 import team.unnamed.inject.Named;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 @Command(names = { "hmcrewards", "rewards" }, permission = "hmcrewards.command.hmcrewards")
 public final class HMCRewardsCommand implements CommandClass {
@@ -46,14 +48,14 @@ public final class HMCRewardsCommand implements CommandClass {
     @Command(names = "queue", permission = "hmcrewards.command.queue")
     @SuppressWarnings("rawtypes")
     public void queue(final @NotNull CommandSender sender, final @Switch(value = "f") boolean tryForceGive, final @PlayerSelector String targetName, final @NotNull RewardProvider provider, final @NotNull @RewardRef String arg) {
-        final Reward reward;
+        final List<Reward> rewards;
 
-        if ((reward = provider.fromReference(arg)) == null) {
+        if ((rewards = provider.fromReference(arg)).isEmpty()) {
             translationManager.send(sender, "reward.invalid", Placeholder.component("arg", Component.text(arg)));
             return;
         }
 
-        final var icon = reward.icon().build(itemMatcher);
+        final var icon = rewards.get(0).icon().build(itemMatcher);
         final Component rewardDisplayName;
         if (icon.hasItemMeta()) {
             final var meta = icon.getItemMeta();
@@ -82,7 +84,7 @@ public final class HMCRewardsCommand implements CommandClass {
                         translationManager.send(sender, "user.not_found", Placeholder.component("arg", Component.text(targetName)));
                         return;
                     }
-                    user.rewards().add(reward);
+                    addStacking(user.rewards(), rewards, provider);
                     userDatastore.save(user);
                     translationManager.send(sender, "reward.queued", Placeholder.component("arg", Component.text(targetName)));
                 });
@@ -100,13 +102,28 @@ public final class HMCRewardsCommand implements CommandClass {
                 continue;
             }
 
-            if (tryForceGive) {
-                // Try give if '-f' flag specified, if not, queue
-                // as always
-                //noinspection unchecked
-                final var result = provider.give(target, reward);
+            List<Reward> rewardsToQueue = rewards;
 
-                if (result == RewardProvider.GiveResult.SUCCESS) {
+            if (tryForceGive) {
+                // Try give if '-f' flag specified, if not, queue as always
+                // Make mutable:
+                rewardsToQueue = new ArrayList<>(rewardsToQueue);
+
+                final var it = rewardsToQueue.iterator();
+                while (it.hasNext()) {
+                    //noinspection unchecked
+                    final var result = provider.give(target, it.next());
+
+                    if (result != RewardProvider.GiveResult.SUCCESS) {
+                        // Couldn't give this one!
+                        break;
+                    }
+
+                    // Given, remove from rewards to queue
+                    it.remove();
+                }
+                if (!it.hasNext()) {
+                    // All rewards were given
                     continue;
                 }
             }
@@ -121,28 +138,7 @@ public final class HMCRewardsCommand implements CommandClass {
                         Placeholder.component("reward_display_name", rewardDisplayName)));
             }
 
-            // Try stacking with existing rewards before adding
-            final var rewards = user.rewards();
-            boolean stacked = false;
-            for (int i = 0; i < rewards.size(); i++) {
-                final var existing = rewards.get(i);
-
-                if (!existing.type().equals(reward.type())) {
-                    // Can't be stacked, different types!
-                    continue;
-                }
-
-                final var combined = provider.stack(existing, reward);
-                if (combined != null) {
-                    rewards.set(i, combined);
-                    stacked = true;
-                    break;
-                }
-            }
-
-            if (!stacked) {
-                user.rewards().add(reward);
-            }
+            addStacking(user.rewards(), rewardsToQueue, provider);
             userManager.saveAsync(user);
         }
 
@@ -152,6 +148,32 @@ public final class HMCRewardsCommand implements CommandClass {
         } else {
             translationManager.send(sender, "reward.queued_multiple",
                     Placeholder.component("players", Component.text(targets.size())));
+        }
+    }
+
+    private void addStacking(final @NotNull List<Reward> rewards, final @NotNull List<Reward> additions, final @NotNull RewardProvider provider) {
+        for (final var addition : additions) {
+            boolean stacked = false;
+            for (int i = 0; i < rewards.size(); i++) {
+                final var existing = rewards.get(i);
+
+                if (!existing.type().equals(provider.id())) {
+                    // Can't be stacked, different types!
+                    continue;
+                }
+
+
+                final var combined = provider.stack(existing, addition);
+                if (combined != null) {
+                    rewards.set(i, combined);
+                    stacked = true;
+                    break;
+                }
+            }
+
+            if (!stacked) {
+                rewards.add(addition);
+            }
         }
     }
 
