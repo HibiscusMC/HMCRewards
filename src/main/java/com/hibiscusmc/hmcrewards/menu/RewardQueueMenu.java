@@ -74,15 +74,27 @@ public final class RewardQueueMenu {
 
         // copy current reward list
         final List<String> rewards = new ArrayList<>(user.rewards());
+        final List<Integer> listSlots;
 
-        final int listFrom = config.getInt("list.from", 0);
-        final int listTo = config.getInt("list.to", 44);
+        if (config.isList("list")) {
+            // list of slots to fill in
+            listSlots = config.getIntegerList("list");
+        } else {
+            // Range of slots to fill in
+            final int listFrom = config.getInt("list.from", 0);
+            final int listTo = config.getInt("list.to", 44);
 
-        if (listFrom >= listTo) {
-            throw new IllegalStateException("list.from cannot be greater or equal than list.to");
+            if (listFrom > listTo) {
+                throw new IllegalStateException("list.from cannot be greater than list.to");
+            }
+
+            listSlots = new ArrayList<>(listTo - listFrom + 1);
+            for (int slot = listFrom; slot <= listTo; slot++) {
+                listSlots.add(slot);
+            }
         }
 
-        final int maxItemCountPerPage = listTo - listFrom + 1;
+        final int maxItemCountPerPage = listSlots.size();
 
         final int maxPage = (int) Math.ceil((double) rewards.size() / maxItemCountPerPage);
         final int currentPage = Math.max(1, Math.min(requestedPage, maxPage));
@@ -92,7 +104,7 @@ public final class RewardQueueMenu {
         final List<String> pageRewards = startIndex == endIndex ? Collections.emptyList() : rewards.subList(startIndex, endIndex);
 
         // fill in reward icons
-        int slot = listFrom;
+        Iterator<Integer> slotIterator = listSlots.iterator();
         int currentIndex = 0;
         for (final String rewardReference : pageRewards) {
             final int rewardOriginalIndex = currentIndex;
@@ -148,17 +160,17 @@ public final class RewardQueueMenu {
                     });
 
             if (update) {
-                gui.updateItem(slot++, button);
+                gui.updateItem(slotIterator.next(), button);
             } else {
-                gui.setItem(slot++, button);
+                gui.setItem(slotIterator.next(), button);
             }
             currentIndex++;
         }
 
         if (update) {
             // update empty spaces
-            for (; slot <= listTo; slot++) {
-                gui.removeItem(slot);
+            while (slotIterator.hasNext()) {
+                gui.removeItem(slotIterator.next());
             }
         }
 

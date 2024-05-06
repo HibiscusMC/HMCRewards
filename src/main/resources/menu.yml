@@ -4,8 +4,8 @@ title: '<white>'
 # How many rows the menu should have
 rows: 6
 
-# The range of slots to use for the reward icons
-# (both from and to are inclusive)
+# The range of slots to use for the reward icons (both from and to are inclusive)
+# ** You can also declare the slots one-by-one using "list: [ 0, 1, 2, 3, 4, ... ]"
 list:
   from: 0
   to: 44
