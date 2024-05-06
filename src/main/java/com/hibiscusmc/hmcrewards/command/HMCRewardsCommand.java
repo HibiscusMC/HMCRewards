@@ -122,7 +122,32 @@ public final class HMCRewardsCommand implements CommandClass {
                         Placeholder.component("reward_display_name", rewardDisplayName)));
             }
 
-            user.rewards().add(arg);
+            // Try stacking with existing rewards before adding
+            final var rewards = user.rewards();
+            boolean stacked = false;
+            for (int i = 0; i < rewards.size(); i++) {
+                final var existing = rewards.get(i);
+                final var existingReward = provider.fromReference(existing);
+
+                if (existingReward == null) {
+                    // Probably a command reward, skip
+                    continue;
+                }
+
+                final var combined = provider.stack(existingReward, reward);
+                if (combined != null) {
+                    final var reference = combined.reference();
+                    if (reference != null) {
+                        rewards.set(i, reference);
+                        stacked = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!stacked) {
+                user.rewards().add(arg);
+            }
             userManager.saveAsync(user);
         }
 

@@ -43,6 +43,19 @@ public interface RewardProvider<T extends Reward> {
 
     @Nullable T fromReference(final @NotNull String reference);
 
+    /**
+     * Tries to stack the given rewards. If the rewards
+     * can be stacked, the result will be the stacked reward.
+     * If the rewards can't be stacked, the result will be null.
+     *
+     * @param a The first reward
+     * @param b The second reward
+     * @return The stacked reward, or null if the rewards can't be stacked
+     */
+    default @Nullable T stack(final @NotNull T a, final @NotNull T b) {
+        return null;
+    }
+
     enum GiveResult {
         SUCCESS,
         NO_SPACE_IN_INVENTORY,

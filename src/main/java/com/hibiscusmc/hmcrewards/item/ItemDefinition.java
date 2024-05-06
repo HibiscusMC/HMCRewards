@@ -4,12 +4,14 @@ import com.hibiscusmc.hmcrewards.util.GlobalMiniMessage;
 import net.kyori.adventure.text.Component;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 
@@ -42,6 +44,11 @@ public final class ItemDefinition {
 
     public int amount() {
         return amount;
+    }
+
+    @Contract(value = "_ -> new", pure = true)
+    public @NotNull ItemDefinition amount(final int amount) {
+        return new ItemDefinition(material, name, amount, new ArrayList<>(lore), customModelData);
     }
 
     public @NotNull List<String> lore() {
@@ -80,6 +87,31 @@ public final class ItemDefinition {
         }
 
         return item;
+    }
+
+    /**
+     * Determines if this item definition is similar to the
+     * other item definition. Similarity determines if the
+     * definitions can be stacked together, ignoring the amount.
+     *
+     * @param other the other item definition
+     * @return true if the definitions are similar, false otherwise
+     */
+    public boolean isSimilar(final @NotNull ItemDefinition other) {
+        return material.equals(other.material)
+                && Objects.equals(name, other.name)
+                && lore.equals(other.lore)
+                && customModelData == other.customModelData;
+    }
+
+    /**
+     * Determines if this item definition is simple and only
+     * has material and amount.
+     *
+     * @return true if the item definition is simple, false otherwise
+     */
+    public boolean isSimple() {
+        return name == null && lore.isEmpty() && customModelData == -1;
     }
 
     public static @NotNull ItemDefinition of(final @NotNull String material) {

@@ -72,6 +72,33 @@ public final class ItemRewardProvider implements RewardProvider<ItemReward>, DnC
     }
 
     @Override
+    public @Nullable ItemReward stack(final @NotNull ItemReward a, final @NotNull ItemReward b) {
+        final var aItem = a.item();
+        final var bItem = b.item();
+
+        // Different items can't be stacked
+        if (!aItem.isSimilar(bItem)) {
+            return null;
+        }
+
+        final var finalAmount = aItem.amount() + bItem.amount();
+
+        // If the item couldn't be found, or the amount exceeds the max stack size, can't stack
+        final var baseItem = itemMatcher.find(aItem.material(), itemMatcher);
+        if (baseItem == null || finalAmount > baseItem.getMaxStackSize()) {
+            return null;
+        }
+
+        if (aItem.isSimple()) {
+            // So both are simple, and both can have a reference
+            return new ItemReward(aItem.material() + " " + finalAmount, aItem.amount(finalAmount));
+        } else {
+            // They are not simple, can't have a reference
+            return new ItemReward(null, aItem.amount(finalAmount));
+        }
+    }
+
+    @Override
     public @NotNull Class<ItemReward> type() {
         return ItemReward.class;
     }
