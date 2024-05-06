@@ -49,15 +49,12 @@ public final class UserCodec implements DnCodec<User> {
                     if (readType == DnType.VALUE) {
                         // Read by reference (old)
                         final var ref = reader.readStringValue();
-                        System.out.println(ref);
                         // todo: warn if list is empty (invalid reference)
                         rewards.addAll(rewardProviderRegistry.findByReference(ref));
                     } else if (readType == DnType.START_OBJECT) {
                         // TODO: do something!
-                        System.out.println("object!");
                     } else {
                         reader.skipValue();
-                        System.out.println("unknown, skipped");
                     }
                 }
                 reader.readArrayEnd();
