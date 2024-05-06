@@ -26,7 +26,7 @@ public final class MongoUserDatastore implements UserDatastore {
                 .withCodecRegistry(CodecRegistries.fromRegistries(
                         database.getCodecRegistry(),
                         CodecRegistries.fromProviders(new CodecProvider() {
-                            private final Codec<User> USER_CODEC = new BsonCodecAdapter<>(new UserCodec());
+                            private final Codec<User> USER_CODEC = new BsonCodecAdapter<>(new UserCodec(rewardProviderRegistry));
                             @Override
                             public <T> Codec<T> get(Class<T> clazz, CodecRegistry registry) {
                                 // if class is User or subclass of User, return the UserCodec

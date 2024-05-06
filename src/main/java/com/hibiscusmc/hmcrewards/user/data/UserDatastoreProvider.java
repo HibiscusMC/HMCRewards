@@ -47,7 +47,7 @@ public final class UserDatastoreProvider implements Provider<UserDatastore> {
                 return new MongoUserDatastore(database, rewardProviderRegistry);
             }
             case "json": {
-                return new JsonUserDatastore(plugin.getDataFolder().toPath().resolve("userdata"));
+                return new JsonUserDatastore(plugin.getDataFolder().toPath().resolve("userdata"), rewardProviderRegistry);
             }
             default: {
                 throw new IllegalArgumentException("Unsupported datastore type: " + type);

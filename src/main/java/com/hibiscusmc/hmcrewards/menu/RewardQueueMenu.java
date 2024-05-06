@@ -16,9 +16,6 @@ import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.components.GuiAction;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -51,19 +48,6 @@ public final class RewardQueueMenu {
         }
     }
 
-    private @NotNull ItemStack buildUnavailableRewardItem(final @NotNull String ref) {
-        // should never happen
-        final ItemStack item = new ItemStack(Material.BARRIER);
-        item.editMeta(meta -> {
-            meta.displayName(Component.text("Unavailable Reward: " + ref).color(NamedTextColor.RED));
-            meta.lore(List.of(
-                    Component.text("This reward is unavailable."),
-                    Component.text("Contact the server administrator to fix this.")
-            ));
-        });
-        return item;
-    }
-
     @SuppressWarnings({"unchecked", "rawtypes"})
     private boolean updateRewardIcons(final @NotNull Player player, final @NotNull Gui gui, final int requestedPage, final boolean update) {
         final User user = userManager.getCached(player);
@@ -73,7 +57,7 @@ public final class RewardQueueMenu {
         }
 
         // copy current reward list
-        final List<String> rewards = new ArrayList<>(user.rewards());
+        final List<Reward> rewards = new ArrayList<>(user.rewards());
         final List<Integer> listSlots;
 
         if (config.isList("list")) {
@@ -101,25 +85,20 @@ public final class RewardQueueMenu {
 
         final int startIndex = (currentPage - 1) * maxItemCountPerPage;
         final int endIndex = Math.min(startIndex + maxItemCountPerPage, rewards.size());
-        final List<String> pageRewards = startIndex == endIndex ? Collections.emptyList() : rewards.subList(startIndex, endIndex);
+        final List<Reward> pageRewards = startIndex == endIndex ? Collections.emptyList() : rewards.subList(startIndex, endIndex);
 
         // fill in reward icons
         Iterator<Integer> slotIterator = listSlots.iterator();
         int currentIndex = 0;
-        for (final String rewardReference : pageRewards) {
+        for (final Reward reward : pageRewards) {
             final int rewardOriginalIndex = currentIndex;
-            final Reward reward = rewardProviderRegistry.findByReference(rewardReference);
-            final ItemStack icon = reward == null ? buildUnavailableRewardItem(rewardReference) : reward.icon().build(itemMatcher);
+            final ItemStack icon = reward.icon().build(itemMatcher);
             final GuiItem button = ItemBuilder.from(icon)
                     .asGuiItem(event -> {
                         event.setCancelled(true);
 
-                        if (reward == null) {
-                            return;
-                        }
-
                         // find current rewards again (up-to-date)
-                        final List<String> currentRewards = user.rewards();
+                        final List<Reward> currentRewards = user.rewards();
                         final int index;
                         
                         if (currentRewards.equals(rewards)) {
@@ -130,7 +109,7 @@ public final class RewardQueueMenu {
                             // (This may cause inconsistencies, by giving the first
                             //  reward with the same reference, but the behavior is
                             //  the same and the reward won't change)
-                            index = currentRewards.indexOf(rewardReference);
+                            index = currentRewards.indexOf(reward);
                         }
 
                         // if current reward is present, give it to the player and remove it from the list
@@ -190,7 +169,7 @@ public final class RewardQueueMenu {
                 final GuiItem button = ItemBuilder.from(icon)
                         .asGuiItem(switch (key.toLowerCase()) {
                             case "bulk-claim" -> (GuiAction<InventoryClickEvent>) (event -> {
-                                final List<String> currentRewards = user.rewards();
+                                final List<Reward> currentRewards = user.rewards();
                                 if (currentRewards.isEmpty()) {
                                     translationManager.send(player, "reward.bulk_claim.no_rewards");
                                     soundManager.play(player, "reward-bulk-claim-error");
@@ -199,17 +178,9 @@ public final class RewardQueueMenu {
 
                                 // give all rewards
                                 boolean anyGiven = false;
-                                final ListIterator<String> rewardIterator = currentRewards.listIterator(currentRewards.size());
+                                final ListIterator<Reward> rewardIterator = currentRewards.listIterator(currentRewards.size());
                                 while (rewardIterator.hasPrevious()) {
-                                    final String rewardReference = rewardIterator.previous();
-                                    final Reward reward = rewardProviderRegistry.findByReference(rewardReference);
-
-                                    if (reward == null) {
-                                        // reward not found, invalid?
-                                        plugin.getLogger().warning("Reward not found: " + rewardReference + " was tried to be given to " + player.getName() + ".");
-                                        continue;
-                                    }
-
+                                    final Reward reward = rewardIterator.previous();
                                     final RewardProvider provider = rewardProviderRegistry.provider(reward.type());
                                     if (provider == null) {
                                         // provider not found, invalid?

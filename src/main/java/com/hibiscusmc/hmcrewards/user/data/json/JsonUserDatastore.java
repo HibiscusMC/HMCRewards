@@ -5,6 +5,7 @@ import com.google.gson.stream.JsonWriter;
 import com.hibiscusmc.hmcrewards.data.serialize.DnCodec;
 import com.hibiscusmc.hmcrewards.data.serialize.json.JsonDnReader;
 import com.hibiscusmc.hmcrewards.data.serialize.json.JsonDnWriter;
+import com.hibiscusmc.hmcrewards.reward.RewardProviderRegistry;
 import com.hibiscusmc.hmcrewards.user.User;
 import com.hibiscusmc.hmcrewards.user.data.UserDatastore;
 import com.hibiscusmc.hmcrewards.user.data.serialize.UserCodec;
@@ -22,9 +23,9 @@ public final class JsonUserDatastore implements UserDatastore {
     private final Path folder;
     private final DnCodec<User> codec;
 
-    public JsonUserDatastore(final @NotNull Path folder) {
+    public JsonUserDatastore(final @NotNull Path folder, final @NotNull RewardProviderRegistry rewardProviderRegistry) {
         this.folder = requireNonNull(folder, "folder");
-        this.codec = new UserCodec();
+        this.codec = new UserCodec(rewardProviderRegistry);
     }
 
     @Override

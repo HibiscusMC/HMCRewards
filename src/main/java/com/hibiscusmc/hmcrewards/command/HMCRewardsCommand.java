@@ -83,7 +83,7 @@ public final class HMCRewardsCommand implements CommandClass {
                         translationManager.send(sender, "user.not_found", Placeholder.component("arg", Component.text(targetName)));
                         return;
                     }
-                    user.rewards().add(arg);
+                    user.rewards().add(reward);
                     userDatastore.save(user);
                     translationManager.send(sender, "reward.queued", Placeholder.component("arg", Component.text(targetName)));
                 });
@@ -127,26 +127,22 @@ public final class HMCRewardsCommand implements CommandClass {
             boolean stacked = false;
             for (int i = 0; i < rewards.size(); i++) {
                 final var existing = rewards.get(i);
-                final var existingReward = provider.fromReference(existing);
 
-                if (existingReward == null) {
-                    // Probably a command reward, skip
+                if (!existing.type().equals(reward.type())) {
+                    // Can't be stacked, different types!
                     continue;
                 }
 
-                final var combined = provider.stack(existingReward, reward);
+                final var combined = provider.stack(existing, reward);
                 if (combined != null) {
-                    final var reference = combined.reference();
-                    if (reference != null) {
-                        rewards.set(i, reference);
-                        stacked = true;
-                        break;
-                    }
+                    rewards.set(i, combined);
+                    stacked = true;
+                    break;
                 }
             }
 
             if (!stacked) {
-                user.rewards().add(arg);
+                user.rewards().add(reward);
             }
             userManager.saveAsync(user);
         }

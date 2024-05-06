@@ -1,5 +1,6 @@
 package com.hibiscusmc.hmcrewards.user;
 
+import com.hibiscusmc.hmcrewards.reward.Reward;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -11,13 +12,13 @@ public interface User {
 
     @NotNull String name();
 
-    @NotNull List<String> rewards();
+    @NotNull List<Reward> rewards();
 
     boolean hasReceivedRewardsBefore();
 
     void hasReceivedRewardsBefore(final boolean hasReceivedRewardsBefore);
 
-    static @NotNull User user(final @NotNull UUID uuid, final @NotNull String name, final @NotNull List<String> rewards, final boolean hasReceivedRewardsBefore) {
+    static @NotNull User user(final @NotNull UUID uuid, final @NotNull String name, final @NotNull List<Reward> rewards, final boolean hasReceivedRewardsBefore) {
         return new UserImpl(uuid, name, rewards, hasReceivedRewardsBefore);
     }
 

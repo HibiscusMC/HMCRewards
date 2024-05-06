@@ -3,6 +3,8 @@ package com.hibiscusmc.hmcrewards.user.data.serialize;
 import com.hibiscusmc.hmcrewards.data.serialize.DnCodec;
 import com.hibiscusmc.hmcrewards.data.serialize.DnReader;
 import com.hibiscusmc.hmcrewards.data.serialize.DnWriter;
+import com.hibiscusmc.hmcrewards.reward.Reward;
+import com.hibiscusmc.hmcrewards.reward.RewardProviderRegistry;
 import com.hibiscusmc.hmcrewards.user.User;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,7 +12,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static java.util.Objects.requireNonNull;
+
 public final class UserCodec implements DnCodec<User> {
+    private final RewardProviderRegistry rewardProviderRegistry;
+
+    public UserCodec(final @NotNull RewardProviderRegistry rewardProviderRegistry) {
+        this.rewardProviderRegistry = requireNonNull(rewardProviderRegistry, "rewardProviderRegistry");
+    }
+
     @Override
     public @NotNull Class<User> type() {
         return User.class;
@@ -22,7 +32,7 @@ public final class UserCodec implements DnCodec<User> {
 
         UUID uuid = null;
         String name = null;
-        final List<String> rewards = new ArrayList<>();
+        final List<Reward> rewards = new ArrayList<>();
         boolean hasReceivedRewardsBefore = false;
 
         while (reader.hasMoreValuesOrEntries()) {
@@ -34,7 +44,8 @@ public final class UserCodec implements DnCodec<User> {
             } else if (prop.equals("rewards")) {
                 reader.readArrayStart();
                 while (reader.hasMoreValuesOrEntries()) {
-                    rewards.add(reader.readStringValue());
+                    System.out.println(reader.readType());
+                    rewards.add(rewardProviderRegistry.findByReference(reader.readStringValue()));
                 }
                 reader.readArrayEnd();
             } else if (prop.equals("hasClaimedRewardsBefore")) {
@@ -59,8 +70,13 @@ public final class UserCodec implements DnCodec<User> {
         writer.writeStringValue("name", value.name());
         writer.writeBooleanValue("hasClaimedRewardsBefore", value.hasReceivedRewardsBefore());
         writer.writeArrayStart("rewards");
-        for (final String reward : value.rewards()) {
-            writer.writeStringValue(reward);
+        for (final Reward reward : value.rewards()) {
+            final var ref = reward.reference();
+            if (ref != null) {
+                writer.writeStringValue(ref);
+            } else {
+                throw new IllegalStateException("Reward has no reference.");
+            }
         }
         writer.writeArrayEnd();
         writer.writeObjectEnd();
