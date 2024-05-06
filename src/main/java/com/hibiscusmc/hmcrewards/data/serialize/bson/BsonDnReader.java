@@ -22,7 +22,7 @@ public final class BsonDnReader implements DnReader {
 
     @Override
     public @NotNull DnType readType() {
-        return switch (delegate.readBsonType()) {
+        return switch (delegate.getCurrentBsonType()) {
             case DOCUMENT -> DnType.START_OBJECT;
             case END_OF_DOCUMENT -> DnType.END;
             case ARRAY -> DnType.START_ARRAY;

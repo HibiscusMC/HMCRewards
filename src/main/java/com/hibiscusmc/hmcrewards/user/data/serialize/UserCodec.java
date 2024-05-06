@@ -2,6 +2,7 @@ package com.hibiscusmc.hmcrewards.user.data.serialize;
 
 import com.hibiscusmc.hmcrewards.data.serialize.DnCodec;
 import com.hibiscusmc.hmcrewards.data.serialize.DnReader;
+import com.hibiscusmc.hmcrewards.data.serialize.DnType;
 import com.hibiscusmc.hmcrewards.data.serialize.DnWriter;
 import com.hibiscusmc.hmcrewards.reward.Reward;
 import com.hibiscusmc.hmcrewards.reward.RewardProviderRegistry;
@@ -44,8 +45,23 @@ public final class UserCodec implements DnCodec<User> {
             } else if (prop.equals("rewards")) {
                 reader.readArrayStart();
                 while (reader.hasMoreValuesOrEntries()) {
-                    System.out.println(reader.readType());
-                    rewards.add(rewardProviderRegistry.findByReference(reader.readStringValue()));
+                    final var readType = reader.readType();
+                    if (readType == DnType.VALUE) {
+                        // Read by reference (old)
+                        final var ref = reader.readStringValue();
+                        final var reward = rewardProviderRegistry.findByReference(ref);
+                        if (reward != null) {
+                            rewards.add(reward);
+                        } else {
+                            // TODO: do something!
+                        }
+                    } else if (readType == DnType.START_OBJECT) {
+                        // TODO: do something!
+                        System.out.println("object!");
+                    } else {
+                        reader.skipValue();
+                        System.out.println("unknown, skipped");
+                    }
                 }
                 reader.readArrayEnd();
             } else if (prop.equals("hasClaimedRewardsBefore")) {
