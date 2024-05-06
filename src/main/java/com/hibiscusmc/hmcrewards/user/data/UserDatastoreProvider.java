@@ -3,7 +3,7 @@ package com.hibiscusmc.hmcrewards.user.data;
 import com.hibiscusmc.hmcrewards.HMCRewardsPlugin;
 import com.hibiscusmc.hmcrewards.reward.RewardProviderRegistry;
 import com.hibiscusmc.hmcrewards.user.data.mongo.MongoUserDatastore;
-import com.hibiscusmc.hmcrewards.user.data.yaml.JsonUserDatastore;
+import com.hibiscusmc.hmcrewards.user.data.json.JsonUserDatastore;
 import com.hibiscusmc.hmcrewards.util.YamlFileConfiguration;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;

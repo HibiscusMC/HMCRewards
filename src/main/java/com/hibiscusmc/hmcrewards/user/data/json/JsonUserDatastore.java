@@ -1,4 +1,4 @@
-package com.hibiscusmc.hmcrewards.user.data.yaml;
+package com.hibiscusmc.hmcrewards.user.data.json;
 
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
