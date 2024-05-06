@@ -1,6 +1,7 @@
 package com.hibiscusmc.hmcrewards.command;
 
-import com.hibiscusmc.hmcrewards.command.arg.RewardId;
+import com.hibiscusmc.hmcrewards.command.arg.PlayerSelector;
+import com.hibiscusmc.hmcrewards.command.arg.RewardRef;
 import com.hibiscusmc.hmcrewards.feedback.SoundManager;
 import com.hibiscusmc.hmcrewards.feedback.TranslationManager;
 import com.hibiscusmc.hmcrewards.item.ItemMatcher;
@@ -17,7 +18,6 @@ import me.fixeddev.commandflow.annotated.CommandClass;
 import me.fixeddev.commandflow.annotated.annotation.Command;
 import me.fixeddev.commandflow.annotated.annotation.OptArg;
 import me.fixeddev.commandflow.annotated.annotation.Switch;
-import me.fixeddev.commandflow.annotated.annotation.Text;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
@@ -45,8 +45,7 @@ public final class HMCRewardsCommand implements CommandClass {
 
     @Command(names = "queue", permission = "hmcrewards.command.queue")
     @SuppressWarnings("rawtypes")
-    public void queue(final @NotNull CommandSender sender, final @Switch(value = "f") boolean tryForceGive, final @NotNull String targetName, final @NotNull RewardProvider provider, final @NotNull @Text RewardId wrappedArg) {
-        final String arg = wrappedArg.id();
+    public void queue(final @NotNull CommandSender sender, final @Switch(value = "f") boolean tryForceGive, final @PlayerSelector String targetName, final @NotNull RewardProvider provider, final @NotNull @RewardRef String arg) {
         final Reward reward;
 
         if ((reward = provider.fromReference(arg)) == null) {

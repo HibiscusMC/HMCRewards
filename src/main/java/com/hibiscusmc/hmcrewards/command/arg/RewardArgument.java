@@ -21,7 +21,6 @@ import static java.util.Objects.requireNonNull;
 public final class RewardArgument implements PartFactory {
     @Override
     public CommandPart createPart(String name, List<? extends Annotation> modifiers) {
-        // context.setObject(RewardProvider.class, "RewardProvider", provider)
         return new Part(name);
     }
 
@@ -33,12 +32,12 @@ public final class RewardArgument implements PartFactory {
         }
 
         @Override
-        public List<RewardId> parseValue(CommandContext context, ArgumentStack stack, CommandPart parent) throws ArgumentParseException {
+        public List<String> parseValue(CommandContext context, ArgumentStack stack, CommandPart parent) throws ArgumentParseException {
             final StringJoiner joiner = new StringJoiner(" ");
             while (stack.hasNext()) {
                 joiner.add(stack.next());
             }
-            return Collections.singletonList(new RewardId(joiner.toString()));
+            return Collections.singletonList(joiner.toString());
         }
 
         @Override
