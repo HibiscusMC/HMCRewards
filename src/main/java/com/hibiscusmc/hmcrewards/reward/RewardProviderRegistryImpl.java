@@ -24,7 +24,7 @@ final class RewardProviderRegistryImpl implements RewardProviderRegistry {
     public @NotNull List<? extends Reward> findByReference(final @NotNull String rewardRef) {
         for (final var provider : providers.values()) {
             final var rewards = provider.fromReference(rewardRef);
-            if (rewards.isEmpty()) {
+            if (!rewards.isEmpty()) {
                 return rewards;
             }
         }
