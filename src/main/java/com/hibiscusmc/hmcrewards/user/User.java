@@ -12,6 +12,8 @@ public interface User {
 
     @NotNull String name();
 
+    void name(final @NotNull String name);
+
     @NotNull List<Reward> rewards();
 
     boolean hasReceivedRewardsBefore();

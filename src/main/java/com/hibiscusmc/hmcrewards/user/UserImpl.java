@@ -10,7 +10,7 @@ import static java.util.Objects.requireNonNull;
 
 final class UserImpl implements User {
     private final UUID uuid;
-    private final String name;
+    private String name;
     private final List<Reward> rewards;
     private boolean hasReceivedRewardsBefore;
 
@@ -29,6 +29,11 @@ final class UserImpl implements User {
     @Override
     public @NotNull String name() {
         return name;
+    }
+
+    @Override
+    public void name(final @NotNull String name) {
+        this.name = name;
     }
 
     @Override

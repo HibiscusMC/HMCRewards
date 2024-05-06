@@ -38,6 +38,14 @@ public final class PlayerJoinQuitListener implements Listener {
             if (user == null) {
                 // initial user creation
                 user = User.user(player.getUniqueId(), player.getName());
+            } else {
+                // update username
+                final var oldName = user.name();
+                final var newName = player.getName();
+                if (!oldName.equals(newName)) {
+                    plugin.getLogger().info("Updating username for " + user.uuid() + " from " + oldName + " to " + newName);
+                    user.name(newName);
+                }
             }
 
             // cache user data
