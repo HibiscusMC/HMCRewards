@@ -20,7 +20,6 @@ tasks.assemble {
 }
 
 tasks {
-
     compileJava {
         options.release = 17
     }

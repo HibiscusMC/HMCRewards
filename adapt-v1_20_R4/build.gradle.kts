@@ -14,9 +14,3 @@ dependencies {
 
     api(project(":hmcrewards-adapt-api"))
 }
-
-tasks {
-    compileJava {
-        options.release = 21
-    }
-}
