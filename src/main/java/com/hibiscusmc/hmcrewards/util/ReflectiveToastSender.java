@@ -2,6 +2,7 @@ package com.hibiscusmc.hmcrewards.util;
 
 import com.google.gson.JsonObject;
 import com.hibiscusmc.hmcrewards.HMCRewardsPlugin;
+import com.hibiscusmc.hmcrewards.adapt.ToastSender;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import io.papermc.lib.PaperLib;
@@ -28,10 +29,11 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import static com.hibiscusmc.hmcrewards.util.Expressions.lazy;
+import static com.hibiscusmc.hmcrewards.adapt.util.Expressions.lazy;
+import static com.hibiscusmc.hmcrewards.adapt.util.Expressions.let;
 
 // Toasts 1.20.2+
-public final class Toasts {
+public final class ReflectiveToastSender implements ToastSender {
     private static final ReflectionRemapper REMAPPER = ReflectionRemapper.forReobfMappingsInPaperJar();
 
     // MinecraftServer
@@ -132,17 +134,13 @@ public final class Toasts {
         }
     }
 
-    public static void showToast(final @NotNull Player player, final @NotNull ItemStack icon, final @NotNull Component title) {
+    @Override
+    public void showToast(final @NotNull Player player, final @NotNull ItemStack icon, final @NotNull Component title) {
         try {
             showToast0(player, icon, title);
         } catch (final ReflectiveOperationException e) {
             throw new IllegalStateException("Could not show toast", e);
         }
-    }
-
-    private static <T> T let(final @NotNull T t, final @NotNull Consumer<T> configure) {
-        configure.accept(t);
-        return t;
     }
 
     private static void showToast0(final @NotNull Player player, final @NotNull ItemStack icon, final @NotNull Component title) throws ReflectiveOperationException {

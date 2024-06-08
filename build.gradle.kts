@@ -27,7 +27,6 @@ dependencies {
     implementation("team.unnamed:inject:2.0.1") // inject
     implementation("dev.triumphteam:triumph-gui:3.1.6") // triumph-gui
     implementation("net.kyori:adventure-text-serializer-bungeecord:4.3.2") // adventure-text-serializer-bungeecord
-    implementation("net.kyori:adventure-nbt:4.15.0") // adventure-nbt
     implementation("xyz.jpenilla:reflection-remapper:0.1.0") // reflection-remapper
     implementation("io.papermc:paperlib:1.0.8") // paperlib
 
@@ -35,6 +34,9 @@ dependencies {
 
     implementation("me.fixeddev:commandflow-universal:0.6.0")
     implementation("me.fixeddev:commandflow-bukkit:0.6.0")
+
+    implementation(project(":hmcrewards-adapt-api"))
+    implementation(project(":hmcrewards-adapt-v1_20_R1", configuration = "reobf"))
 
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
@@ -52,7 +54,7 @@ tasks {
             github("dmulloy2", "ProtocolLib", "5.1.0", "ProtocolLib.jar")
             url("https://repo.hibiscusmc.com/releases/me/lojosho/HibiscusCommons/0.2.6/HibiscusCommons-0.2.6-all.jar")
         }
-        minecraftVersion("1.20.4")
+        minecraftVersion("1.20.1")
     }
     test {
         useJUnitPlatform()

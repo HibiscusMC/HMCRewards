@@ -2,6 +2,7 @@ package com.hibiscusmc.hmcrewards.util;
 
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -11,6 +12,16 @@ import java.util.stream.Collectors;
 
 public final class MinecraftReflect {
     private static final String CRAFT_BUKKIT_IMPL = Bukkit.getServer().getClass().getName().split("\\.")[3];
+
+    public static @Nullable Class<?> findNullable(final @NotNull String @NotNull ... names) {
+        for (final var name : names) {
+            try {
+                return Class.forName(name);
+            } catch (final ClassNotFoundException ignored) {
+            }
+        }
+        return null;
+    }
 
     public static @NotNull Class<?> find(final @NotNull String @NotNull ... names) {
         for (final var name : names) {

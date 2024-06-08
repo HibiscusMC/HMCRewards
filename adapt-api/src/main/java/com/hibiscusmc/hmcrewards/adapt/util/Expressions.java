@@ -1,4 +1,4 @@
-package com.hibiscusmc.hmcrewards.util;
+package com.hibiscusmc.hmcrewards.adapt.util;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -7,6 +7,11 @@ import java.util.function.Supplier;
 
 public final class Expressions {
     private Expressions() {
+    }
+
+    public static <T> T let(final @NotNull T t, final @NotNull Consumer<T> configure) {
+        configure.accept(t);
+        return t;
     }
 
     public static <T> @NotNull Supplier<T> lazy(final @NotNull Supplier<T> supplier) {

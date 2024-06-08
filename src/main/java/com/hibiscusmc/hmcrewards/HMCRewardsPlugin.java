@@ -1,5 +1,6 @@
 package com.hibiscusmc.hmcrewards;
 
+import com.hibiscusmc.hmcrewards.adapt.AdaptModule;
 import com.hibiscusmc.hmcrewards.command.CommandModule;
 import com.hibiscusmc.hmcrewards.feedback.FeedbackModule;
 import com.hibiscusmc.hmcrewards.hook.HookModule;
@@ -95,6 +96,7 @@ public final class HMCRewardsPlugin extends HibiscusPlugin implements Module {
                 .bind("menu.yml");
 
         // install modules
+        binder.install(new AdaptModule());
         binder.install(new CommandModule());
         binder.install(new FeedbackModule());
         binder.install(new ItemModule());
