@@ -13,7 +13,6 @@ import com.hibiscusmc.hmcrewards.user.User;
 import com.hibiscusmc.hmcrewards.user.UserManager;
 import com.hibiscusmc.hmcrewards.user.data.UserDatastore;
 import com.hibiscusmc.hmcrewards.util.ConfigurationBinder;
-import com.hibiscusmc.hmcrewards.util.ReflectiveToastSender;
 import com.hibiscusmc.hmcrewards.util.YamlFileConfiguration;
 import me.fixeddev.commandflow.annotated.CommandClass;
 import me.fixeddev.commandflow.annotated.annotation.Command;

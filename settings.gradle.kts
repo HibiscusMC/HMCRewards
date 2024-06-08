@@ -6,6 +6,7 @@ rootProject.name = "HMCRewards"
 
 includePrefixed("adapt-api")
 includePrefixed("adapt-v1_20_R1")
+includePrefixed("adapt-v1_20_R4")
 
 fun includePrefixed(name: String) {
     val kebabName = name.replace(':', '-')

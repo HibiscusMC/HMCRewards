@@ -36,15 +36,13 @@ dependencies {
     implementation("me.fixeddev:commandflow-bukkit:0.6.0")
 
     implementation(project(":hmcrewards-adapt-api"))
-    implementation(project(":hmcrewards-adapt-v1_20_R1", configuration = "reobf"))
-
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 }
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
 }
 
@@ -52,7 +50,7 @@ tasks {
     runServer {
         downloadPlugins {
             github("dmulloy2", "ProtocolLib", "5.1.0", "ProtocolLib.jar")
-            url("https://repo.hibiscusmc.com/releases/me/lojosho/HibiscusCommons/0.2.6/HibiscusCommons-0.2.6-all.jar")
+            url("https://repo.hibiscusmc.com/releases/me/lojosho/HibiscusCommons/0.4.2/HibiscusCommons-0.4.2-all.jar")
         }
         minecraftVersion("1.20.1")
     }
@@ -63,6 +61,9 @@ tasks {
         filesMatching("plugin.yml") {
             expand("project" to project)
         }
+    }
+    compileJava {
+        options.release = 17
     }
     shadowJar {
         minimize()
@@ -75,5 +76,11 @@ tasks {
         relocate("org.bson", "$pkg.bson")
         relocate("xyz.jpenilla.reflectionremapper", "$pkg.reflectionremapper")
         relocate("net.kyori.adventure.nbt", "$pkg.adventure.nbt")
+
+        arrayOf("v1_20_R1"/*, "v1_20_R4"*/).forEach {
+            val buildTask = project(":hmcrewards-adapt-$it").tasks.named("reobfJar")
+            dependsOn(buildTask)
+            from(zipTree(buildTask.map { out -> out.outputs.files.singleFile }))
+        }
     }
 }
