@@ -3,6 +3,8 @@ package com.hibiscusmc.hmcrewards.item;
 import com.hibiscusmc.hmcrewards.util.GlobalMiniMessage;
 import net.kyori.adventure.text.Component;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -25,13 +27,15 @@ public final class ItemDefinition {
     private final int amount;
     private final List<String> lore;
     private final int customModelData;
+    private final boolean glowing;
 
-    private ItemDefinition(final @NotNull String material, final @Nullable String name, final int amount, final @NotNull List<String> lore, final int customModelData) {
+    private ItemDefinition(final @NotNull String material, final @Nullable String name, final int amount, final @NotNull List<String> lore, final int customModelData, final boolean glowing) {
         this.material = requireNonNull(material, "material");
         this.name = name;
         this.amount = amount;
         this.lore = requireNonNull(lore, "lore");
         this.customModelData = customModelData;
+        this.glowing = glowing;
     }
 
     public @NotNull String material() {
@@ -48,11 +52,15 @@ public final class ItemDefinition {
 
     @Contract(value = "_ -> new", pure = true)
     public @NotNull ItemDefinition amount(final int amount) {
-        return new ItemDefinition(material, name, amount, new ArrayList<>(lore), customModelData);
+        return new ItemDefinition(material, name, amount, new ArrayList<>(lore), customModelData, glowing);
     }
 
     public @NotNull List<String> lore() {
         return lore;
+    }
+
+    public boolean glowing() {
+        return glowing;
     }
 
     public @NotNull ItemStack build(final @NotNull ItemMatcher itemMatcher) {
@@ -86,6 +94,13 @@ public final class ItemDefinition {
             item.editMeta(meta -> meta.setCustomModelData(customModelData));
         }
 
+        if (glowing) {
+            item.editMeta(meta -> {
+                meta.addEnchant(Enchantment.DURABILITY, 1, true);
+                meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            });
+        }
+
         return item;
     }
 
@@ -101,7 +116,8 @@ public final class ItemDefinition {
         return material.equals(other.material)
                 && Objects.equals(name, other.name)
                 && lore.equals(other.lore)
-                && customModelData == other.customModelData;
+                && customModelData == other.customModelData
+                && glowing == other.glowing;
     }
 
     /**
@@ -111,7 +127,7 @@ public final class ItemDefinition {
      * @return true if the item definition is simple, false otherwise
      */
     public boolean isSimple() {
-        return name == null && lore.isEmpty() && customModelData == -1;
+        return name == null && lore.isEmpty() && customModelData == -1 && !glowing;
     }
 
     public static @NotNull ItemDefinition of(final @NotNull String material) {
@@ -131,7 +147,11 @@ public final class ItemDefinition {
     }
 
     public static @NotNull ItemDefinition of(final @NotNull String material, final @Nullable String name, final int amount, final @NotNull List<String> lore, final int customModelData) {
-        return new ItemDefinition(material, name, amount, lore, customModelData);
+        return of(material, name, amount, lore, customModelData, false);
+    }
+
+    public static @NotNull ItemDefinition of(final @NotNull String material, final @Nullable String name, final int amount, final @NotNull List<String> lore, final int customModelData, final boolean glowing) {
+        return new ItemDefinition(material, name, amount, lore, customModelData, glowing);
     }
 
     public static @NotNull ItemDefinition deserialize(final @NotNull ConfigurationSection section) throws IllegalArgumentException {
@@ -140,11 +160,12 @@ public final class ItemDefinition {
         final int amount = section.getInt("amount", 1);
         final List<String> lore = section.getStringList("lore");
         final int customModelData = section.getInt("custom-model-data", -1);
+        final boolean glowing = section.getBoolean("glowing", false);
 
         if (material == null) {
             throw new IllegalArgumentException("Missing 'material' property for item definition at " + section.getCurrentPath());
         }
 
-        return ItemDefinition.of(material, name, amount, lore, customModelData);
+        return ItemDefinition.of(material, name, amount, lore, customModelData, glowing);
     }
 }
