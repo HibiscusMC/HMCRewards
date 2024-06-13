@@ -25,7 +25,7 @@ dependencies {
     compileOnly("com.mojang:datafixerupper:6.0.8") // datafixerupper
 
     implementation("team.unnamed:inject:2.0.1") // inject
-    implementation("dev.triumphteam:triumph-gui:3.1.6") // triumph-gui
+    implementation("dev.triumphteam:triumph-gui:3.1.8") // triumph-gui
     implementation("net.kyori:adventure-text-serializer-bungeecord:4.3.2") // adventure-text-serializer-bungeecord
     implementation("xyz.jpenilla:reflection-remapper:0.1.0") // reflection-remapper
     implementation("io.papermc:paperlib:1.0.8") // paperlib
