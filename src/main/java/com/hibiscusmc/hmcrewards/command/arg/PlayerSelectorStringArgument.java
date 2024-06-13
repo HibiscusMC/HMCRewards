@@ -11,9 +11,13 @@ import org.bukkit.Bukkit;
 import java.lang.annotation.Annotation;
 import java.util.*;
 
+import static java.util.Objects.requireNonNull;
+
 public final class PlayerSelectorStringArgument implements PartFactory {
     @Override
     public CommandPart createPart(String name, List<? extends Annotation> modifiers) {
+        final var annotation = getAnnotation(modifiers, PlayerSelector.class);
+        requireNonNull(annotation, "PlayerSelector annotation not found");
         return new ArgumentPart() {
             @Override
             public String getName() {
@@ -37,6 +41,7 @@ public final class PlayerSelectorStringArgument implements PartFactory {
                     for (final var player : Bukkit.matchPlayer(last)) {
                         names.add(player.getName());
                     }
+                    if (annotation.multiple()) {
                     if ("@a".startsWith(last)) {
                         names.add("@a");
                     }
@@ -45,6 +50,7 @@ public final class PlayerSelectorStringArgument implements PartFactory {
                     }
                     if ("@e".startsWith(last)) {
                         names.add("@e");
+                    }
                     }
                     return names;
                 }

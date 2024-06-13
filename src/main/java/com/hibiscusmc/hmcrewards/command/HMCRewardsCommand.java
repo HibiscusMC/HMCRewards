@@ -18,6 +18,7 @@ import me.fixeddev.commandflow.annotated.CommandClass;
 import me.fixeddev.commandflow.annotated.annotation.Command;
 import me.fixeddev.commandflow.annotated.annotation.OptArg;
 import me.fixeddev.commandflow.annotated.annotation.Switch;
+import me.fixeddev.commandflow.bukkit.annotation.Sender;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
@@ -195,6 +196,11 @@ public final class HMCRewardsCommand implements CommandClass {
 
             rewardQueueMenu.open((Player) sender, 1);
         }
+    }
+
+    @Command(names = "see", permission = "hmcrewards.command.see")
+    public void see(final @NotNull @Sender Player sender, final @NotNull @PlayerSelector(multiple = false) String target) {
+        rewardQueueMenu.open(sender, target, 1);
     }
 
     @Command(names = "reload", permission = "hmcrewards.command.reload")

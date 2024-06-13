@@ -9,6 +9,7 @@ import com.hibiscusmc.hmcrewards.reward.RewardProvider;
 import com.hibiscusmc.hmcrewards.reward.RewardProviderRegistry;
 import com.hibiscusmc.hmcrewards.user.User;
 import com.hibiscusmc.hmcrewards.user.UserManager;
+import com.hibiscusmc.hmcrewards.user.data.UserDatastore;
 import com.hibiscusmc.hmcrewards.util.GlobalMiniMessage;
 import com.hibiscusmc.hmcrewards.util.OptionalPlaceholderAPI;
 import com.hibiscusmc.hmcrewards.util.YamlFileConfiguration;
@@ -16,12 +17,15 @@ import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.components.GuiAction;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import team.unnamed.inject.Inject;
 import team.unnamed.inject.Named;
 
@@ -30,6 +34,7 @@ import java.util.*;
 public final class RewardQueueMenu {
     @Inject private Plugin plugin;
     @Inject private UserManager userManager;
+    @Inject private UserDatastore userDatastore;
     @Inject private TranslationManager translationManager;
     @Inject private SoundManager soundManager;
     @Inject private ItemMatcher itemMatcher;
@@ -37,23 +42,45 @@ public final class RewardQueueMenu {
     @Inject @Named("menu.yml") private YamlFileConfiguration config;
 
     public void open(final @NotNull Player player, final int page) {
+        open(player, null, page);
+    }
+
+    public void open(final @NotNull Player player, final @Nullable String queueOwnerName, final int page) {
         final Gui gui = Gui.gui()
                 .title(GlobalMiniMessage.deserialize(OptionalPlaceholderAPI.setPlaceholders(player, config.getString("title", ""))))
                 .rows(config.getInt("rows", 6))
                 .disableAllInteractions()
                 .create();
 
-        if (updateRewardIcons(player, gui, page, false)) {
+        if (updateRewardIcons(player, queueOwnerName, gui, page, false)) {
             gui.open(player);
         }
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private boolean updateRewardIcons(final @NotNull Player player, final @NotNull Gui gui, final int requestedPage, final boolean update) {
-        final User user = userManager.getCached(player);
-        if (user == null) {
-            translationManager.send(player, "user.self_not_found");
-            return false;
+    private boolean updateRewardIcons(final @NotNull Player player, final @Nullable String queueOwnerName, final @NotNull Gui gui, final int requestedPage, final boolean update) {
+        final User user;
+        if (queueOwnerName == null) {
+            // Then it's the player's own queue
+            user = userManager.getCached(player);
+            if (user == null) {
+                translationManager.send(player, "user.self_not_found");
+                return false;
+            }
+        } else {
+            // Then it's another player's queue
+            final var owner = Bukkit.getPlayerExact(queueOwnerName);
+            if (owner != null) {
+                // Player is online
+                user = userManager.getCached(owner);
+            } else {
+                // Player is offline
+                user = userDatastore.findByUsername(queueOwnerName);
+            }
+            if (user == null) {
+                translationManager.send(player, "user.not_found", Placeholder.unparsed("arg", queueOwnerName));
+                return false;
+            }
         }
 
         // copy current reward list
@@ -97,6 +124,11 @@ public final class RewardQueueMenu {
                     .asGuiItem(event -> {
                         event.setCancelled(true);
 
+                        if (queueOwnerName != null) {
+                            // Then it's not the player's own queue
+                            return;
+                        }
+
                         // find current rewards again (up-to-date)
                         final List<Reward> currentRewards = user.rewards();
                         final int index;
@@ -135,7 +167,7 @@ public final class RewardQueueMenu {
                         }
 
                         // update in current page
-                        updateRewardIcons(player, gui, currentPage, true);
+                        updateRewardIcons(player, queueOwnerName, gui, currentPage, true);
                     });
 
             if (update) {
@@ -158,6 +190,11 @@ public final class RewardQueueMenu {
         final ConfigurationSection iconsSection = config.getConfigurationSection("icons");
         if (iconsSection != null) {
             for (final String key : iconsSection.getKeys(false)) {
+                if (key.equalsIgnoreCase("bulk-claim") && queueOwnerName != null) {
+                    // bulk-claim is only available for the player's own queue
+                    continue;
+                }
+
                 final ConfigurationSection iconSection = iconsSection.getConfigurationSection(key);
 
                 // should never be null
@@ -210,7 +247,7 @@ public final class RewardQueueMenu {
                                 }
 
                                 // update gui
-                                if (!updateRewardIcons(player, gui, currentPage, true)) {
+                                if (!updateRewardIcons(player, queueOwnerName, gui, currentPage, true)) {
                                     player.closeInventory();
                                 }
                                 event.setCancelled(true);
@@ -220,7 +257,7 @@ public final class RewardQueueMenu {
                                     event.setCancelled(true);
                                     return;
                                 }
-                                if (!updateRewardIcons(player, gui, currentPage + 1, true)) {
+                                if (!updateRewardIcons(player, queueOwnerName, gui, currentPage + 1, true)) {
                                     player.closeInventory();
                                 }
                                 event.setCancelled(true);
@@ -230,7 +267,7 @@ public final class RewardQueueMenu {
                                     event.setCancelled(true);
                                     return;
                                 }
-                                if (!updateRewardIcons(player, gui, currentPage - 1, true)) {
+                                if (!updateRewardIcons(player, queueOwnerName, gui, currentPage - 1, true)) {
                                     player.closeInventory();
                                 }
                                 event.setCancelled(true);
