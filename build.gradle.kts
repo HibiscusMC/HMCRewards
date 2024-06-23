@@ -12,6 +12,7 @@ repositories {
     maven("https://repo.unnamed.team/repository/unnamed-public/") // command-flow
     maven("https://repo.hibiscusmc.com/releases/") // HibiscusCommons
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") // PlaceholderAPI
+    maven("https://s01.oss.sonatype.org/content/repositories/snapshots/") // adventure-platform-bukkit
     mavenCentral()
 }
 
