@@ -3,14 +3,11 @@ package com.hibiscusmc.hmcrewards.v1_20_R4;
 import com.google.gson.JsonObject;
 import com.hibiscusmc.hmcrewards.adapt.ToastSender;
 import com.mojang.serialization.JsonOps;
-import net.kyori.adventure.nbt.BinaryTagTypes;
-import net.kyori.adventure.nbt.CompoundBinaryTag;
-import net.kyori.adventure.nbt.ListBinaryTag;
-import net.kyori.adventure.nbt.TagStringIO;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.advancements.AdvancementTree;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import org.bukkit.Bukkit;
@@ -20,8 +17,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
+import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Level;
 
 import static com.hibiscusmc.hmcrewards.adapt.util.Expressions.let;
 import static java.util.Objects.requireNonNull;
@@ -43,37 +41,17 @@ public final class ToastSender_v1_20_R4 implements ToastSender {
             }));
             o.add("display", let(new JsonObject(), display -> {
                 display.add("icon", let(new JsonObject(), iconObj -> {
-                    iconObj.addProperty("item", icon.getType().getKey().toString());
-
-                    final var binaryTag = CompoundBinaryTag.builder();
+                    iconObj.addProperty("id", icon.getType().getKey().toString());
                     if (icon.hasItemMeta()) {
                         final var meta = icon.getItemMeta();
-                        if (!meta.getEnchants().isEmpty()) {
-                            // if it has at least one enchantment, add
-                            // an enchantment to the nbt so the item is
-                            // shiny in the toast
-                            binaryTag.put("Enchantments", ListBinaryTag.builder(BinaryTagTypes.COMPOUND)
-                                    .add(CompoundBinaryTag.builder()
-                                            .putString("id", "aqua_affinity")
-                                            .putInt("lvl", 1)
-                                            .build())
-                                    .build());
-                        }
-
-                        if (meta.hasCustomModelData()) {
-                            binaryTag.putInt("CustomModelData", meta.getCustomModelData());
-                        }
-                    }
-                    final var built = binaryTag.build();
-                    if (!built.keySet().isEmpty()) {
-                        String nbtString;
-                        try {
-                            nbtString = TagStringIO.get().asString(built);
-                        } catch (final IOException e) {
-                            throw new IllegalStateException("Couldn't serialize Item NBT", e);
-                        }
-
-                        iconObj.addProperty("nbt", nbtString);
+                        iconObj.add("components", let(new JsonObject(), components -> {
+                            if (!meta.getEnchants().isEmpty()) {
+                                components.addProperty("minecraft:enchantment_glint_override", true);
+                            }
+                            if (meta.hasCustomModelData()) {
+                                components.addProperty("minecraft:custom_model_data", meta.getCustomModelData());
+                            }
+                        }));
                     }
                 }));
                 display.add("title", GsonComponentSerializer.gson().serializeToTree(title));
@@ -90,10 +68,12 @@ public final class ToastSender_v1_20_R4 implements ToastSender {
 
         final var nmsPlayer = ((CraftPlayer) player).getHandle();
         final var progress = nmsPlayer.getAdvancements().getOrStartProgress(advancementHolder);
+        MinecraftServer.getServer().getAdvancements().tree().addAll(Set.of(advancementHolder));
         progress.getRemainingCriteria().forEach(criteria -> nmsPlayer.getAdvancements().award(advancementHolder, criteria));
 
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             progress.getRemainingCriteria().forEach(criteria -> nmsPlayer.getAdvancements().revoke(advancementHolder, criteria));
+            MinecraftServer.getServer().getAdvancements().tree().remove(Set.of(key));
         }, 2L);
     }
 }
