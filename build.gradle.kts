@@ -39,6 +39,7 @@ dependencies {
     implementation(project(":hmcrewards-adapt-api"))
     implementation(project(":hmcrewards-adapt-v1_20_R1", configuration = "reobf"))
     implementation(project(":hmcrewards-adapt-v1_20_R4", configuration = "reobf"))
+    implementation(project(":hmcrewards-adapt-v1_21_R1", configuration = "reobf"))
 
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
