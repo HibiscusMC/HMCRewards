@@ -22,10 +22,10 @@ import java.util.UUID;
 import static com.hibiscusmc.hmcrewards.adapt.util.Expressions.let;
 import static java.util.Objects.requireNonNull;
 
-public final class ToastSender_v1_20_R1 implements ToastSender {
+public final class ToastSender_v1_21_R1 implements ToastSender {
     private final Plugin plugin;
 
-    public ToastSender_v1_20_R1(final @NotNull Plugin plugin) {
+    public ToastSender_v1_21_R1(final @NotNull Plugin plugin) {
         this.plugin = requireNonNull(plugin, "plugin");
     }
 

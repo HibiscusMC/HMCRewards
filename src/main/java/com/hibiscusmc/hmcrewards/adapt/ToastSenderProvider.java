@@ -28,7 +28,7 @@ public final class ToastSenderProvider implements Provider<ToastSender> {
 
     private @NotNull ToastSender findForVersion(final @NotNull String versionId) {
         try {
-            return (ToastSender) Class.forName("com.hibiscusmc.hmcrewards.v1_21_R1.ToastSender_v1_20_R1").getDeclaredConstructor(Plugin.class).newInstance(plugin);
+            return (ToastSender) Class.forName("com.hibiscusmc.hmcrewards.v" + versionId + ".ToastSender_v" + versionId).getDeclaredConstructor(Plugin.class).newInstance(plugin);
         } catch (final Exception e) {
             plugin.getLogger().log(Level.SEVERE, "Couldn't create Toast sender for version " + versionId + ". Falling back to no-op implementation", e);
             return (player, icon, title) -> { /* no-op */ };
