@@ -44,14 +44,20 @@ public final class HMCRewardsPlaceholderExpansion extends PlaceholderExpansion {
             return null;
         }
 
-        if (params.equalsIgnoreCase("current_reward_amount")) {
-            final User user = userManager.getCached(player);
-            if (user == null) {
-                return null;
-            } else {
-                return Integer.toString(user.rewards().size());
+        return switch (params.toLowerCase()) {
+            case "current_reward_amount" -> {
+                final User user = userManager.getCached(player);
+                if (user == null) {
+                    yield null;
+                } else {
+                    yield Integer.toString(user.rewards().size());
+                }
             }
-        }
-        return null;
+            case "has_reward" -> {
+                final var user = userManager.getCached(player);
+                yield Boolean.toString((user != null && !user.rewards().isEmpty()));
+            }
+            default -> null;
+        };
     }
 }
