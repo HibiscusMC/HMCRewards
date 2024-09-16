@@ -15,6 +15,13 @@ list:
 #     -  bulk-claim
 #     -  previous-page
 #     -  next-page
+#
+# Command actions can also be added to any icon by adding a "player-commands"
+# or "console-commands" fields like:
+#     player-commands:
+#     - 'say Hello!'
+#     console-commands:
+#     - 'tell %player_name% Hello!'
 icons:
   bulk-claim:
     slots:
@@ -43,3 +50,13 @@ icons:
     lore:
       - '<gray>Click to go to the next page'
       - '<gray>of the rewards menu'
+  example:
+    slots:
+      - 51
+    material: PAPER
+    name: 'Say Hello'
+    lore: []
+    player-commands:
+      - 'say Hello!'
+    console-commands:
+      - 'tell %player_name% Hello!'

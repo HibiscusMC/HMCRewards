@@ -201,81 +201,103 @@ public final class RewardQueueMenu {
                 assert iconSection != null;
 
                 final var iconSlots = iconSection.getIntegerList("slots");
+                final var playerCommands = iconSection.getStringList("player-commands");
+                final var consoleCommands = iconSection.getStringList("console-commands");
 
                 final ItemStack icon = ItemDefinition.deserialize(iconSection).build(itemMatcher);
-                final GuiItem button = ItemBuilder.from(icon)
-                        .asGuiItem(switch (key.toLowerCase()) {
-                            case "bulk-claim" -> (GuiAction<InventoryClickEvent>) (event -> {
-                                final List<Reward> currentRewards = user.rewards();
-                                if (currentRewards.isEmpty()) {
-                                    translationManager.send(player, "reward.bulk_claim.no_rewards");
-                                    soundManager.play(player, "reward-bulk-claim-error");
-                                    return;
-                                }
+                var action = switch (key.toLowerCase()) {
+                    case "bulk-claim" -> (GuiAction<InventoryClickEvent>) (event -> {
+                        final List<Reward> currentRewards = user.rewards();
+                        if (currentRewards.isEmpty()) {
+                            translationManager.send(player, "reward.bulk_claim.no_rewards");
+                            soundManager.play(player, "reward-bulk-claim-error");
+                            return;
+                        }
 
-                                // give all rewards
-                                boolean anyGiven = false;
-                                final ListIterator<Reward> rewardIterator = currentRewards.listIterator(currentRewards.size());
-                                while (rewardIterator.hasPrevious()) {
-                                    final Reward reward = rewardIterator.previous();
-                                    final RewardProvider provider = rewardProviderRegistry.provider(reward.type());
-                                    if (provider == null) {
-                                        // provider not found, invalid?
-                                        plugin.getLogger().warning("Provider for reward type " + reward.type() + " not found.");
-                                        continue;
-                                    }
+                        // give all rewards
+                        boolean anyGiven = false;
+                        final ListIterator<Reward> rewardIterator = currentRewards.listIterator(currentRewards.size());
+                        while (rewardIterator.hasPrevious()) {
+                            final Reward reward = rewardIterator.previous();
+                            final RewardProvider provider = rewardProviderRegistry.provider(reward.type());
+                            if (provider == null) {
+                                // provider not found, invalid?
+                                plugin.getLogger().warning("Provider for reward type " + reward.type() + " not found.");
+                                continue;
+                            }
 
-                                    // give the reward and remove
-                                    final RewardProvider.GiveResult result = provider.give(player, reward);
-                                    if (result == RewardProvider.GiveResult.SUCCESS) {
-                                        // success giving it
-                                        soundManager.play(player, "reward-give");
-                                        rewardIterator.remove();
-                                        anyGiven = true;
-                                    }
-                                }
+                            // give the reward and remove
+                            final RewardProvider.GiveResult result = provider.give(player, reward);
+                            if (result == RewardProvider.GiveResult.SUCCESS) {
+                                // success giving it
+                                soundManager.play(player, "reward-give");
+                                rewardIterator.remove();
+                                anyGiven = true;
+                            }
+                        }
 
-                                if (anyGiven) {
-                                    userManager.saveAsync(user);
-                                    translationManager.send(player, "reward.bulk_claim.claimed");
-                                    soundManager.play(player, "reward-bulk-claim");
-                                    player.closeInventory();
-                                } else {
-                                    translationManager.send(player, "reward.bulk_claim.cant_claim");
-                                    soundManager.play(player, "reward-bulk-claim-error");
-                                    return;
-                                }
+                        if (anyGiven) {
+                            userManager.saveAsync(user);
+                            translationManager.send(player, "reward.bulk_claim.claimed");
+                            soundManager.play(player, "reward-bulk-claim");
+                            player.closeInventory();
+                        } else {
+                            translationManager.send(player, "reward.bulk_claim.cant_claim");
+                            soundManager.play(player, "reward-bulk-claim-error");
+                            return;
+                        }
 
-                                // update gui
-                                if (!updateRewardIcons(player, queueOwnerName, gui, currentPage, true)) {
-                                    player.closeInventory();
-                                }
-                                event.setCancelled(true);
-                            });
-                            case "next-page" -> (GuiAction<InventoryClickEvent>) (event -> {
-                                if (currentPage + 1 > maxPage) {
-                                    event.setCancelled(true);
-                                    return;
-                                }
-                                if (!updateRewardIcons(player, queueOwnerName, gui, currentPage + 1, true)) {
-                                    player.closeInventory();
-                                }
-                                event.setCancelled(true);
-                            });
-                            case "previous-page" -> (GuiAction<InventoryClickEvent>) (event -> {
-                                if (currentPage - 1 < 1) {
-                                    event.setCancelled(true);
-                                    return;
-                                }
-                                if (!updateRewardIcons(player, queueOwnerName, gui, currentPage - 1, true)) {
-                                    player.closeInventory();
-                                }
-                                event.setCancelled(true);
-                            });
-                            default -> (GuiAction<InventoryClickEvent>) (event -> {
-                                event.setCancelled(true);
-                            });
-                        });
+                        // update gui
+                        if (!updateRewardIcons(player, queueOwnerName, gui, currentPage, true)) {
+                            player.closeInventory();
+                        }
+                        event.setCancelled(true);
+                    });
+                    case "next-page" -> (GuiAction<InventoryClickEvent>) (event -> {
+                        if (currentPage + 1 > maxPage) {
+                            event.setCancelled(true);
+                            return;
+                        }
+                        if (!updateRewardIcons(player, queueOwnerName, gui, currentPage + 1, true)) {
+                            player.closeInventory();
+                        }
+                        event.setCancelled(true);
+                    });
+                    case "previous-page" -> (GuiAction<InventoryClickEvent>) (event -> {
+                        if (currentPage - 1 < 1) {
+                            event.setCancelled(true);
+                            return;
+                        }
+                        if (!updateRewardIcons(player, queueOwnerName, gui, currentPage - 1, true)) {
+                            player.closeInventory();
+                        }
+                        event.setCancelled(true);
+                    });
+                    default -> (GuiAction<InventoryClickEvent>) (event -> {
+                        event.setCancelled(true);
+                    });
+                };
+
+                if (!playerCommands.isEmpty()) {
+                    final var previousAction = action;
+                    action = event -> {
+                        previousAction.execute(event);
+                        for (final String command : playerCommands) {
+                            Bukkit.dispatchCommand(player, command);
+                        }
+                    };
+                }
+                if (!consoleCommands.isEmpty()) {
+                    final var previousAction = action;
+                    action = event -> {
+                        previousAction.execute(event);
+                        for (final String command : consoleCommands) {
+                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+                        }
+                    };
+                }
+
+                final GuiItem button = ItemBuilder.from(icon).asGuiItem(action);
 
                 for (final int iconSlot : iconSlots) {
                     if (update) {
