@@ -1,5 +1,6 @@
 package com.hibiscusmc.hmcrewards.user.listener;
 
+import com.hibiscusmc.hmcrewards.api.event.UserLoadEvent;
 import com.hibiscusmc.hmcrewards.feedback.TranslationManager;
 import com.hibiscusmc.hmcrewards.user.User;
 import com.hibiscusmc.hmcrewards.user.UserManager;
@@ -50,6 +51,9 @@ public final class PlayerJoinQuitListener implements Listener {
 
             // cache user data
             userManager.update(user);
+
+            UserLoadEvent load = new UserLoadEvent(player, user);
+            Bukkit.getScheduler().runTask(plugin, () -> Bukkit.getPluginManager().callEvent(load));
 
             // send unclaimed rewards notification
             if (!user.rewards().isEmpty()) {
