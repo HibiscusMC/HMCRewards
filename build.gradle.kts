@@ -2,12 +2,13 @@ plugins {
     java
     id("xyz.jpenilla.run-paper") version "2.3.0"
     id("io.github.goooler.shadow") version "8.1.7"
+    id("maven-publish")
 }
 
 repositories {
     mavenLocal()
     maven("https://libraries.minecraft.net/") // datafixerupper
-    maven("https://papermc.io/repo/repository/maven-public/") // paper-api, paperlib
+    maven("https://repo.papermc.io/repository/maven-public/") // paper-api, paperlib
     maven("https://repo.oraxen.com/releases") // Oraxen
     maven("https://repo.unnamed.team/repository/unnamed-public/") // command-flow
     maven("https://repo.hibiscusmc.com/releases/") // HibiscusCommons
@@ -48,6 +49,18 @@ dependencies {
 java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(21))
+    }
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = "${rootProject.group}"
+            artifactId = rootProject.name
+            version = "${rootProject.version}"
+
+            from(components["java"])
+        }
     }
 }
 
