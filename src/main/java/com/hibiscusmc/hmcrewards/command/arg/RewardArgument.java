@@ -1,6 +1,7 @@
 package com.hibiscusmc.hmcrewards.command.arg;
 
 import com.hibiscusmc.hmcrewards.reward.CommandRewardProvider;
+import com.hibiscusmc.hmcrewards.reward.ItemRewardProvider;
 import com.hibiscusmc.hmcrewards.reward.RewardProvider;
 import me.fixeddev.commandflow.CommandContext;
 import me.fixeddev.commandflow.annotated.part.PartFactory;
@@ -57,6 +58,14 @@ public final class RewardArgument implements PartFactory {
             if (provider instanceof CommandRewardProvider commandRewardProvider) {
                 final List<String> suggestions = new ArrayList<>();
                 for (final String id : commandRewardProvider.ids()) {
+                    if (id.startsWith(ref)) {
+                        suggestions.add(id);
+                    }
+                }
+                return suggestions;
+            } else if (provider instanceof ItemRewardProvider itemRewardProvider) {
+                final List<String> suggestions = new ArrayList<>();
+                for (final String id : itemRewardProvider.ids()) {
                     if (id.startsWith(ref)) {
                         suggestions.add(id);
                     }

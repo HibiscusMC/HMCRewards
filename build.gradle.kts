@@ -10,6 +10,7 @@ repositories {
     maven("https://libraries.minecraft.net/") // datafixerupper
     maven("https://repo.papermc.io/repository/maven-public/") // paper-api, paperlib
     maven("https://repo.oraxen.com/releases") // Oraxen
+    maven("https://repo.nexomc.com/releases") // Nexo
     maven("https://repo.unnamed.team/repository/unnamed-public/") // command-flow
     maven("https://repo.hibiscusmc.com/releases/") // HibiscusCommons
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") // PlaceholderAPI
@@ -22,6 +23,7 @@ dependencies {
 
     compileOnly("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
     compileOnly("io.th0rgal:oraxen:1.164.0") // Oraxen
+    compileOnly("com.nexomc:nexo:1.0.0") // Nexo
     compileOnly("me.lojosho:HibiscusCommons:0.2.4") // HibiscusCommons
     compileOnly("me.clip:placeholderapi:2.11.5") // PlaceholderAPI
     compileOnly("com.mojang:datafixerupper:6.0.8") // datafixerupper
@@ -81,7 +83,7 @@ tasks {
         }
     }
     compileJava {
-        options.release = 17
+        options.release = 21
     }
     shadowJar {
         val pkg = "com.hibiscusmc.hmcrewards.lib"

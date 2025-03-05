@@ -6,6 +6,7 @@ import com.hibiscusmc.hmcrewards.data.serialize.DnType;
 import com.hibiscusmc.hmcrewards.data.serialize.DnWriter;
 import com.hibiscusmc.hmcrewards.item.ItemDefinition;
 import com.hibiscusmc.hmcrewards.item.ItemMatcher;
+import com.nexomc.nexo.api.NexoItems;
 import me.fixeddev.commandflow.exception.CommandUsage;
 import net.kyori.adventure.text.Component;
 import org.bukkit.configuration.ConfigurationSection;
@@ -18,6 +19,8 @@ import team.unnamed.inject.Inject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public final class ItemRewardProvider implements RewardProvider<ItemReward>, DnCodec<ItemReward> {
     public static final String ID = "item";
@@ -27,6 +30,10 @@ public final class ItemRewardProvider implements RewardProvider<ItemReward>, DnC
     @Override
     public @NotNull String id() {
         return ID;
+    }
+
+    public @NotNull Set<String> ids() {
+        return NexoItems.itemNames().stream().map(item -> "nexo:" + item).collect(Collectors.toSet());
     }
 
     @Override
