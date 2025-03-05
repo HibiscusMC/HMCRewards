@@ -28,6 +28,8 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.5") // PlaceholderAPI
     compileOnly("com.mojang:datafixerupper:6.0.8") // datafixerupper
 
+    compileOnly(files("libs/HMCVouchers-1.1.0-all.jar")) // HMCVouchers
+
     implementation("team.unnamed:inject:2.0.1") // inject
     implementation("dev.triumphteam:triumph-gui:3.1.10") // triumph-gui
     implementation("net.kyori:adventure-text-serializer-bungeecord:4.3.2") // adventure-text-serializer-bungeecord
@@ -69,10 +71,10 @@ publishing {
 tasks {
     runServer {
         downloadPlugins {
-            github("dmulloy2", "ProtocolLib", "5.1.0", "ProtocolLib.jar")
-            url("https://repo.hibiscusmc.com/releases/me/lojosho/HibiscusCommons/0.4.6/HibiscusCommons-0.4.6-all.jar")
+            github("dmulloy2", "ProtocolLib", "5.3.0", "ProtocolLib.jar")
+            url("https://repo.hibiscusmc.com/releases/me/lojosho/HibiscusCommons/0.6.0/HibiscusCommons-0.6.0-all.jar")
         }
-        minecraftVersion("1.21")
+        minecraftVersion("1.21.1")
     }
     test {
         useJUnitPlatform()

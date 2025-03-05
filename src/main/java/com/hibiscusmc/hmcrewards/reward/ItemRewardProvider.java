@@ -7,6 +7,7 @@ import com.hibiscusmc.hmcrewards.data.serialize.DnWriter;
 import com.hibiscusmc.hmcrewards.item.ItemDefinition;
 import com.hibiscusmc.hmcrewards.item.ItemMatcher;
 import com.nexomc.nexo.api.NexoItems;
+import io.tofpu.vouchers.Vouchers;
 import me.fixeddev.commandflow.exception.CommandUsage;
 import net.kyori.adventure.text.Component;
 import org.bukkit.configuration.ConfigurationSection;
@@ -16,16 +17,17 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import team.unnamed.inject.Inject;
+import team.unnamed.inject.Named;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public final class ItemRewardProvider implements RewardProvider<ItemReward>, DnCodec<ItemReward> {
     public static final String ID = "item";
 
-    @Inject private ItemMatcher itemMatcher;
+        @Inject private ItemMatcher itemMatcher;
 
     @Override
     public @NotNull String id() {
@@ -33,7 +35,17 @@ public final class ItemRewardProvider implements RewardProvider<ItemReward>, DnC
     }
 
     public @NotNull Set<String> ids() {
-        return NexoItems.itemNames().stream().map(item -> "nexo:" + item).collect(Collectors.toSet());
+        Set<String> ids = new HashSet<>();
+        ids.addAll(Vouchers.get().getVoucherManager().getVoucherNames()
+                .stream()
+                .map(voucher -> "hmcvouchers:" + voucher)
+                .toList());
+
+        ids.addAll(NexoItems.itemNames()
+                .stream()
+                .map(item -> "nexo:" + item)
+                .toList());
+        return ids;
     }
 
     @Override
