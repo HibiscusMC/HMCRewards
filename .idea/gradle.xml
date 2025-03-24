@@ -9,10 +9,6 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/adapt-api" />
-            <option value="$PROJECT_DIR$/adapt-v1_20_R1" />
-            <option value="$PROJECT_DIR$/adapt-v1_20_R4" />
-            <option value="$PROJECT_DIR$/adapt-v1_21_R1" />
           </set>
         </option>
       </GradleProjectSettings>

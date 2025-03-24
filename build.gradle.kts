@@ -24,7 +24,7 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
     compileOnly("io.th0rgal:oraxen:1.164.0") // Oraxen
     compileOnly("com.nexomc:nexo:1.0.0") // Nexo
-    compileOnly("me.lojosho:HibiscusCommons:0.2.4") // HibiscusCommons
+    compileOnly("me.lojosho:HibiscusCommons:0.6.2-e29bbc8d") // HibiscusCommons
     compileOnly("me.clip:placeholderapi:2.11.5") // PlaceholderAPI
     compileOnly("com.mojang:datafixerupper:6.0.8") // datafixerupper
 
@@ -40,11 +40,6 @@ dependencies {
 
     implementation("me.fixeddev:commandflow-universal:0.6.0")
     implementation("me.fixeddev:commandflow-bukkit:0.6.0")
-
-    implementation(project(":hmcrewards-adapt-api"))
-    implementation(project(":hmcrewards-adapt-v1_20_R1", configuration = "reobf"))
-    implementation(project(":hmcrewards-adapt-v1_20_R4", configuration = "reobf"))
-    implementation(project(":hmcrewards-adapt-v1_21_R1", configuration = "reobf"))
 
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
