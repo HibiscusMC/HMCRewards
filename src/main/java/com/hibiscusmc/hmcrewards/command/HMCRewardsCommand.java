@@ -12,6 +12,7 @@ import com.hibiscusmc.hmcrewards.user.User;
 import com.hibiscusmc.hmcrewards.user.UserManager;
 import com.hibiscusmc.hmcrewards.user.data.UserDatastore;
 import com.hibiscusmc.hmcrewards.util.ConfigurationBinder;
+import com.hibiscusmc.hmcrewards.util.Items;
 import com.hibiscusmc.hmcrewards.util.YamlFileConfiguration;
 import me.fixeddev.commandflow.annotated.CommandClass;
 import me.fixeddev.commandflow.annotated.annotation.Command;
@@ -57,18 +58,7 @@ public final class HMCRewardsCommand implements CommandClass {
         }
 
         final var icon = rewards.get(0).icon().build(itemMatcher);
-        final Component rewardDisplayName;
-        if (icon.hasItemMeta()) {
-            final var meta = icon.getItemMeta();
-            if (meta.hasDisplayName()) {
-                rewardDisplayName = meta.displayName();
-                assert rewardDisplayName != null;
-            } else {
-                rewardDisplayName = Component.translatable(icon);
-            }
-        } else {
-            rewardDisplayName = Component.translatable(icon);
-        }
+        final Component rewardDisplayName = Items.unwrapBrackets(icon.displayName());
         final var showToast = config.getBoolean("toasts.enabled");
 
         final var targets = new HashSet<Player>();
