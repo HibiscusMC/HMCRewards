@@ -10,6 +10,7 @@ import com.nexomc.nexo.api.NexoItems;
 import io.tofpu.vouchers.Vouchers;
 import me.fixeddev.commandflow.exception.CommandUsage;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -17,7 +18,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import team.unnamed.inject.Inject;
-import team.unnamed.inject.Named;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -36,15 +36,18 @@ public final class ItemRewardProvider implements RewardProvider<ItemReward>, DnC
 
     public @NotNull Set<String> ids() {
         Set<String> ids = new HashSet<>();
-        ids.addAll(Vouchers.get().getVoucherManager().getVoucherNames()
-                .stream()
-                .map(voucher -> "hmcvouchers:" + voucher)
-                .toList());
-
-        ids.addAll(NexoItems.itemNames()
-                .stream()
-                .map(item -> "nexo:" + item)
-                .toList());
+        if (Bukkit.getPluginManager().isPluginEnabled("HMCVouchers")) {
+            ids.addAll(Vouchers.get().getVoucherManager().getVoucherNames()
+                    .stream()
+                    .map(voucher -> "hmcvouchers:" + voucher)
+                    .toList());
+        }
+        if (Bukkit.getPluginManager().isPluginEnabled("Nexo")) {
+            ids.addAll(NexoItems.itemNames()
+                    .stream()
+                    .map(item -> "nexo:" + item)
+                    .toList());
+        }
         return ids;
     }
 
