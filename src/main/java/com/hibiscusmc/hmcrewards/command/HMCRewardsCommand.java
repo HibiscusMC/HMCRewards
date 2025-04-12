@@ -113,7 +113,7 @@ public final class HMCRewardsCommand implements CommandClass {
                     // Given, remove from rewards to queue
                     it.remove();
                 }
-                if (!it.hasNext()) {
+                if (rewardsToQueue.isEmpty()) {
                     // All rewards were given
                     continue;
                 }
