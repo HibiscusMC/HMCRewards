@@ -21,17 +21,17 @@ repositories {
 dependencies {
     compileOnly("org.jetbrains:annotations:24.0.1")
 
-    compileOnly("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
     compileOnly("io.th0rgal:oraxen:1.164.0") // Oraxen
     compileOnly("com.nexomc:nexo:1.0.0") // Nexo
-    compileOnly("me.lojosho:HibiscusCommons:0.6.2-e29bbc8d") // HibiscusCommons
-    compileOnly("me.clip:placeholderapi:2.11.5") // PlaceholderAPI
+    compileOnly("me.lojosho:HibiscusCommons:0.6.5-26c2a648") // HibiscusCommons
+    compileOnly("me.clip:placeholderapi:2.11.6") // PlaceholderAPI
     compileOnly("com.mojang:datafixerupper:6.0.8") // datafixerupper
 
     compileOnly(files("libs/HMCVouchers-1.1.0-all.jar")) // HMCVouchers
 
     implementation("team.unnamed:inject:2.0.1") // inject
-    implementation("dev.triumphteam:triumph-gui:3.1.10") // triumph-gui
+    implementation("dev.triumphteam:triumph-gui:3.1.11") // triumph-gui
     implementation("net.kyori:adventure-text-serializer-bungeecord:4.3.2") // adventure-text-serializer-bungeecord
     implementation("xyz.jpenilla:reflection-remapper:0.1.0") // reflection-remapper
     implementation("io.papermc:paperlib:1.0.8") // paperlib
@@ -67,7 +67,7 @@ tasks {
     runServer {
         downloadPlugins {
             github("dmulloy2", "ProtocolLib", "5.3.0", "ProtocolLib.jar")
-            url("https://repo.hibiscusmc.com/releases/me/lojosho/HibiscusCommons/0.6.3/HibiscusCommons-0.6.3-all.jar")
+            url("https://repo.hibiscusmc.com/releases/me/lojosho/HibiscusCommons/0.6.5-26c2a648/HibiscusCommons-0.6.5-26c2a648-all.jar")
         }
         minecraftVersion("1.21.4")
     }
