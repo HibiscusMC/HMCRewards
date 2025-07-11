@@ -39,6 +39,11 @@ public final class HMCRewardsPlaceholderExpansion extends PlaceholderExpansion {
     }
 
     @Override
+    public boolean persist() {
+        return true;
+    }
+
+    @Override
     public @Nullable String onPlaceholderRequest(final Player player, final @NotNull String params) {
         if (player == null) {
             return null;
