@@ -28,6 +28,7 @@ import java.util.logging.Level;
 @SuppressWarnings("unused")
 public final class HMCRewardsPlugin extends HibiscusPlugin implements Module {
     private static final int BSTATS_ID = 21812;
+    private static final int POLYMART_ID = 5896;
 
     @Inject private Set<Service> services;
     @Inject private Set<Listener> listeners;
@@ -35,7 +36,7 @@ public final class HMCRewardsPlugin extends HibiscusPlugin implements Module {
     private final Collection<AutoCloseable> resources = new HashSet<>();
 
     public HMCRewardsPlugin() {
-        super(BSTATS_ID);
+        super(BSTATS_ID, POLYMART_ID);
     }
 
     @Override
