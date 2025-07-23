@@ -24,18 +24,20 @@ import static java.util.Objects.requireNonNull;
 public final class ItemDefinition {
     private final String material;
     private final String name;
+    private final String modelId;
     private final int amount;
     private final List<String> lore;
     private final int customModelData;
     private final boolean glowing;
 
-    private ItemDefinition(final @NotNull String material, final @Nullable String name, final int amount, final @NotNull List<String> lore, final int customModelData, final boolean glowing) {
+    private ItemDefinition(final @NotNull String material, final @Nullable String name, final int amount, final @NotNull List<String> lore, final int customModelData, final boolean glowing, final String modelId) {
         this.material = requireNonNull(material, "material");
         this.name = name;
         this.amount = amount;
         this.lore = requireNonNull(lore, "lore");
         this.customModelData = customModelData;
         this.glowing = glowing;
+        this.modelId = modelId;
     }
 
     public @NotNull String material() {
@@ -52,7 +54,7 @@ public final class ItemDefinition {
 
     @Contract(value = "_ -> new", pure = true)
     public @NotNull ItemDefinition amount(final int amount) {
-        return new ItemDefinition(material, name, amount, new ArrayList<>(lore), customModelData, glowing);
+        return new ItemDefinition(material, name, amount, new ArrayList<>(lore), customModelData, glowing, modelId);
     }
 
     public @NotNull List<String> lore() {
@@ -94,6 +96,7 @@ public final class ItemDefinition {
             item.editMeta(meta -> meta.setCustomModelData(customModelData));
         }
 
+        // TODO: Add Custom Item Model support from the Item Builder in Hibiscus Commons in 0.7
         if (glowing) {
             item.editMeta(meta -> {
                 meta.addEnchant(Enchantment.DURABILITY, 1, true);
@@ -151,7 +154,11 @@ public final class ItemDefinition {
     }
 
     public static @NotNull ItemDefinition of(final @NotNull String material, final @Nullable String name, final int amount, final @NotNull List<String> lore, final int customModelData, final boolean glowing) {
-        return new ItemDefinition(material, name, amount, lore, customModelData, glowing);
+        return of(material, name, amount, lore, customModelData, false, null);
+    }
+
+    public static @NotNull ItemDefinition of(final @NotNull String material, final @Nullable String name, final int amount, final @NotNull List<String> lore, final int customModelData, final boolean glowing, @Nullable final String modelId) {
+        return new ItemDefinition(material, name, amount, lore, customModelData, glowing, modelId);
     }
 
     public static @NotNull ItemDefinition deserialize(final @NotNull ConfigurationSection section) throws IllegalArgumentException {
@@ -160,12 +167,13 @@ public final class ItemDefinition {
         final int amount = section.getInt("amount", 1);
         final List<String> lore = section.getStringList("lore");
         final int customModelData = section.getInt("custom-model-data", -1);
+        final String modelId = section.getString("model-id", null);
         final boolean glowing = section.getBoolean("glowing", false);
 
         if (material == null) {
             throw new IllegalArgumentException("Missing 'material' property for item definition at " + section.getCurrentPath());
         }
 
-        return ItemDefinition.of(material, name, amount, lore, customModelData, glowing);
+        return ItemDefinition.of(material, name, amount, lore, customModelData, glowing, modelId);
     }
 }
