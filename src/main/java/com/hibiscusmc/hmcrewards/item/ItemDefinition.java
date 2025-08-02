@@ -1,6 +1,7 @@
 package com.hibiscusmc.hmcrewards.item;
 
 import com.hibiscusmc.hmcrewards.util.GlobalMiniMessage;
+import me.lojosho.hibiscuscommons.util.ItemBuilder;
 import net.kyori.adventure.text.Component;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
@@ -72,39 +73,41 @@ public final class ItemDefinition {
             throw new IllegalStateException("Invalid item definition, unknown material: " + material);
         }
 
+        ItemBuilder builder = new ItemBuilder(item);
         // set amount
         if (amount != 1) {
-            item.setAmount(amount);
+            builder.setQuantity(amount);
         }
 
         // set display name
         if (name != null) {
-            final Component displayName = GlobalMiniMessage.deserializeForItem(name);
-            item.editMeta(meta -> meta.displayName(displayName));
+            builder.setDisplayName(GlobalMiniMessage.deserializeForItem(name));
         }
 
-        // set display lore
+        if (customModelData > 0) {
+            builder.setCustomModelId(customModelData);
+        }
+
+        if (modelId != null) {
+            builder.setModelItemId(modelId);
+        }
+
+        if (glowing) {
+            builder.setGlowing(true);
+        }
+
+        final ItemStack built = builder.build();
+
+        // need stuff special for lore in terms of formatting
         if (!lore.isEmpty()) {
             final List<Component> displayLore = new ArrayList<>(lore.size());
             for (final String line : lore) {
                 displayLore.add(GlobalMiniMessage.deserializeForItem(line));
             }
-            item.editMeta(meta -> meta.lore(displayLore));
+            built.editMeta(meta -> meta.lore(displayLore));
         }
 
-        if (customModelData > 0) {
-            item.editMeta(meta -> meta.setCustomModelData(customModelData));
-        }
-
-        // TODO: Add Custom Item Model support from the Item Builder in Hibiscus Commons in 0.7
-        if (glowing) {
-            item.editMeta(meta -> {
-                meta.addEnchant(Enchantment.DURABILITY, 1, true);
-                meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-            });
-        }
-
-        return item;
+        return built;
     }
 
     /**
@@ -120,7 +123,8 @@ public final class ItemDefinition {
                 && Objects.equals(name, other.name)
                 && lore.equals(other.lore)
                 && customModelData == other.customModelData
-                && glowing == other.glowing;
+                && glowing == other.glowing
+                && Objects.equals(modelId, other.modelId);
     }
 
     /**

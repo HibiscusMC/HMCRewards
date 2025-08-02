@@ -21,10 +21,10 @@ repositories {
 dependencies {
     compileOnly("org.jetbrains:annotations:24.0.1")
 
-    compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.20.6-R0.1-SNAPSHOT")
     compileOnly("io.th0rgal:oraxen:1.164.0") // Oraxen
     compileOnly("com.nexomc:nexo:1.0.0") // Nexo
-    compileOnly("me.lojosho:HibiscusCommons:0.6.5-26c2a648") // HibiscusCommons
+    compileOnly("me.lojosho:HibiscusCommons:0.7.1-99f3c240") // HibiscusCommons
     compileOnly("me.clip:placeholderapi:2.11.6") // PlaceholderAPI
     compileOnly("com.mojang:datafixerupper:6.0.8") // datafixerupper
 
@@ -66,10 +66,9 @@ publishing {
 tasks {
     runServer {
         downloadPlugins {
-            github("dmulloy2", "ProtocolLib", "5.3.0", "ProtocolLib.jar")
-            url("https://repo.hibiscusmc.com/releases/me/lojosho/HibiscusCommons/0.6.5-26c2a648/HibiscusCommons-0.6.5-26c2a648-all.jar")
+            //url("https://repo.hibiscusmc.com/releases/me/lojosho/HibiscusCommons/0.7.1-99f3c240/HibiscusCommons-0.7.1-99f3c240-all.jar")
         }
-        minecraftVersion("1.21.4")
+        minecraftVersion("1.21.8")
     }
     test {
         useJUnitPlatform()
