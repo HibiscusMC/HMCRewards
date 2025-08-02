@@ -91,4 +91,8 @@ tasks {
         relocate("xyz.jpenilla.reflectionremapper", "$pkg.reflectionremapper")
         relocate("net.kyori.adventure.nbt", "$pkg.adventure.nbt")
     }
+
+    build {
+        dependsOn(shadowJar)
+    }
 }
