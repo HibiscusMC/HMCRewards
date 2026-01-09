@@ -126,8 +126,8 @@ public final class HMCRewardsCommand implements CommandClass {
 
             if (showToast) {
                 NMSHandlers.getHandler()
-                        .getPacketHandler()
-                        .sendToastPacket(target, icon, translationManager.getOrDefaultToKey("notification.toast",
+                        .getUtilHandler()
+                        .sendToastAdvancement(target, icon, translationManager.getOrDefaultToKey("notification.toast",
                                 Placeholder.component("reward_display_name", rewardDisplayName)), Component.empty());
             }
 

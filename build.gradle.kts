@@ -6,6 +6,7 @@ plugins {
 }
 
 repositories {
+    mavenCentral()
     mavenLocal()
     maven("https://libraries.minecraft.net/") // datafixerupper
     maven("https://repo.papermc.io/repository/maven-public/") // paper-api, paperlib
@@ -15,7 +16,6 @@ repositories {
     maven("https://repo.hibiscusmc.com/releases/") // HibiscusCommons
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") // PlaceholderAPI
     maven("https://s01.oss.sonatype.org/content/repositories/snapshots/") // adventure-platform-bukkit
-    mavenCentral()
 }
 
 dependencies {
@@ -24,7 +24,7 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20.6-R0.1-SNAPSHOT")
     compileOnly("io.th0rgal:oraxen:1.164.0") // Oraxen
     compileOnly("com.nexomc:nexo:1.0.0") // Nexo
-    compileOnly("me.lojosho:HibiscusCommons:0.7.1-99f3c240") // HibiscusCommons
+    compileOnly("me.lojosho:HibiscusCommons:0.8.3-a89bcec3") // HibiscusCommons
     compileOnly("me.clip:placeholderapi:2.11.6") // PlaceholderAPI
     compileOnly("com.mojang:datafixerupper:6.0.8") // datafixerupper
 
