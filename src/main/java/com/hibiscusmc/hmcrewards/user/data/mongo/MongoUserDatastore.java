@@ -6,6 +6,7 @@ import com.hibiscusmc.hmcrewards.user.User;
 import com.hibiscusmc.hmcrewards.user.data.UserDatastore;
 import com.hibiscusmc.hmcrewards.user.data.serialize.UserCodec;
 import com.mongodb.DuplicateKeyException;
+import com.mongodb.MongoCommandException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
@@ -49,8 +50,8 @@ public final class MongoUserDatastore implements UserDatastore {
 
             // we might have some users with the same name (like if they change their name
             // and it's not updated in the database), so we don't want to make it unique
-            collection.createIndex(Indexes.text("name"));
-        } catch (DuplicateKeyException e) {
+            // collection.createIndex(Indexes.text("name")); // Can only have 1 text index per collection, prefer UUID than usernames.
+        } catch (DuplicateKeyException | MongoCommandException e) {
             throw new IllegalStateException("Failed to create index for uuid", e);
         }
     }
