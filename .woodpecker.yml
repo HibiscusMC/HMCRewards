@@ -19,7 +19,7 @@ steps:
     commands:
       - mkdir -p /workspace/tmp
       - chmod +x ./gradlew
-      - ./gradlew build --no-daemon --stacktrace
+      - ./gradlew shadowJar --no-daemon --stacktrace
 
   - name: prepare-upload
     image: alpine:3.20
