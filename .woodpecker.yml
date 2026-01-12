@@ -43,7 +43,7 @@ steps:
         fi
         
         LASTCOMMITHASH="$(printf '%s' "$CI_COMMIT_SHA" | cut -c1-7)"
-        VERSION="$(perl -ne 'if(/^\s*version\s*=\s*["'\'']([^"'\'']+)["'\'']/){print $1; exit}' build.gradle.kts 2>/dev/null || true)"
+        VERSION="$(perl -ne 'if (/^\s*version\s*=\s*([^\s#]+)/){print $1; exit}' gradle.properties 2>/dev/null || true)"
         VERSION="$${VERSION:-unknown}"
         
         JAR_DIR="$(dirname "$JAR")"
