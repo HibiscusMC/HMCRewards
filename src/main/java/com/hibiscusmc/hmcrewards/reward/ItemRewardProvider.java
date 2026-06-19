@@ -27,7 +27,7 @@ import java.util.Set;
 public final class ItemRewardProvider implements RewardProvider<ItemReward>, DnCodec<ItemReward> {
     public static final String ID = "item";
 
-        @Inject private ItemMatcher itemMatcher;
+    @Inject private ItemMatcher itemMatcher;
 
     @Override
     public @NotNull String id() {
@@ -111,6 +111,10 @@ public final class ItemRewardProvider implements RewardProvider<ItemReward>, DnC
         final var aItem = a.item();
         final var bItem = b.item();
 
+        if (aItem.isSerialized() || bItem.isSerialized()) {
+            return null;
+        }
+
         // Different items can't be stacked
         if (!aItem.isSimilar(bItem)) {
             return null;
@@ -148,6 +152,12 @@ public final class ItemRewardProvider implements RewardProvider<ItemReward>, DnC
         }
 
         writer.writeObjectStart();
+        if (value.item().serializedItemStack() != null) {
+            writer.writeStringValue("serialized-itemstack", value.item().serializedItemStack());
+            writer.writeObjectEnd();
+            return;
+        }
+
         writer.writeStringValue("material", value.item().material());
         if (value.item().name() != null) {
             writer.writeStringValue("name", value.item().name());
@@ -190,6 +200,7 @@ public final class ItemRewardProvider implements RewardProvider<ItemReward>, DnC
 
         reader.readObjectStart();
         String material = null;
+        String serializedItemStack = null;
         String displayName = null;
         int amount = 1;
         final List<String> lore = new ArrayList<>();
@@ -197,6 +208,7 @@ public final class ItemRewardProvider implements RewardProvider<ItemReward>, DnC
         while (reader.hasMoreValuesOrEntries()) {
             String name = reader.readName();
             switch (name) {
+                case "serialized-itemstack" -> serializedItemStack = reader.readStringValue();
                 case "material" -> material = reader.readStringValue();
                 case "name" -> displayName = reader.readStringValue();
                 case "amount" -> amount = reader.readIntValue();
@@ -209,6 +221,11 @@ public final class ItemRewardProvider implements RewardProvider<ItemReward>, DnC
                 }
                 default -> reader.skipValue();
             }
+        }
+
+        if (serializedItemStack != null) {
+            reader.readObjectEnd();
+            return new ItemReward(null, ItemDefinition.ofSerializedItemStack(serializedItemStack));
         }
 
         if (material == null) {

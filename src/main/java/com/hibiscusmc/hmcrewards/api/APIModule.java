@@ -4,9 +4,7 @@ import com.hibiscusmc.hmcrewards.item.ItemMatcher;
 import com.hibiscusmc.hmcrewards.reward.RewardProviderRegistry;
 import com.hibiscusmc.hmcrewards.user.UserManager;
 import com.hibiscusmc.hmcrewards.user.data.UserDatastore;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.ServicePriority;
 import team.unnamed.inject.AbstractModule;
 import team.unnamed.inject.Provides;
 
@@ -20,15 +18,6 @@ public class APIModule extends AbstractModule {
             ItemMatcher matcher,
             Plugin plugin
     ) {
-        HMCRewardsAPI api = new HMCRewardsAPI(userManager, rewardProviderRegistry, userDatastore, matcher, plugin);
-
-        Bukkit.getServicesManager().register(
-                HMCRewardsAPI.class,
-                api,
-                plugin,
-                ServicePriority.Normal
-        );
-
-        return api;
+        return new HMCRewardsAPI(userManager, rewardProviderRegistry, userDatastore, matcher, plugin);
     }
 }

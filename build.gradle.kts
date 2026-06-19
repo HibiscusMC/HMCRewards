@@ -1,7 +1,7 @@
 plugins {
     java
     id("xyz.jpenilla.run-paper") version "2.3.1"
-    id("com.gradleup.shadow") version "8.3.2"
+    id("com.gradleup.shadow") version "9.0.0-beta4"
     id("maven-publish")
 }
 
@@ -29,6 +29,7 @@ dependencies {
     compileOnly("com.mojang:datafixerupper:6.0.8") // datafixerupper
 
     compileOnly(files("libs/HMCVouchers-1.1.0-all.jar")) // HMCVouchers
+
 
     implementation("team.unnamed:inject:2.0.1") // inject
     implementation("dev.triumphteam:triumph-gui:3.1.11") // triumph-gui

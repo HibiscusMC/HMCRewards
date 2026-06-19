@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -30,8 +31,9 @@ public final class ItemDefinition {
     private final List<String> lore;
     private final int customModelData;
     private final boolean glowing;
+    private final String serializedItemStack;
 
-    private ItemDefinition(final @NotNull String material, final @Nullable String name, final int amount, final @NotNull List<String> lore, final int customModelData, final boolean glowing, final String modelId) {
+    private ItemDefinition(final @NotNull String material, final @Nullable String name, final int amount, final @NotNull List<String> lore, final int customModelData, final boolean glowing, final @Nullable String modelId, final @Nullable String serializedItemStack) {
         this.material = requireNonNull(material, "material");
         this.name = name;
         this.amount = amount;
@@ -39,6 +41,7 @@ public final class ItemDefinition {
         this.customModelData = customModelData;
         this.glowing = glowing;
         this.modelId = modelId;
+        this.serializedItemStack = serializedItemStack;
     }
 
     public @NotNull String material() {
@@ -55,7 +58,7 @@ public final class ItemDefinition {
 
     @Contract(value = "_ -> new", pure = true)
     public @NotNull ItemDefinition amount(final int amount) {
-        return new ItemDefinition(material, name, amount, new ArrayList<>(lore), customModelData, glowing, modelId);
+        return new ItemDefinition(material, name, amount, new ArrayList<>(lore), customModelData, glowing, modelId, serializedItemStack);
     }
 
     public @NotNull List<String> lore() {
@@ -66,7 +69,19 @@ public final class ItemDefinition {
         return glowing;
     }
 
+    public @Nullable String serializedItemStack() {
+        return serializedItemStack;
+    }
+
+    public boolean isSerialized() {
+        return serializedItemStack != null;
+    }
+
     public @NotNull ItemStack build(final @NotNull ItemMatcher itemMatcher) {
+        if (serializedItemStack != null) {
+            return deserializeItemStack(serializedItemStack);
+        }
+
         final ItemStack item = itemMatcher.find(material, itemMatcher);
         if (item == null) {
             // this reward contains an invalid item definition
@@ -119,6 +134,10 @@ public final class ItemDefinition {
      * @return true if the definitions are similar, false otherwise
      */
     public boolean isSimilar(final @NotNull ItemDefinition other) {
+        if (serializedItemStack != null || other.serializedItemStack != null) {
+            return Objects.equals(serializedItemStack, other.serializedItemStack);
+        }
+
         return material.equals(other.material)
                 && Objects.equals(name, other.name)
                 && lore.equals(other.lore)
@@ -134,7 +153,7 @@ public final class ItemDefinition {
      * @return true if the item definition is simple, false otherwise
      */
     public boolean isSimple() {
-        return name == null && lore.isEmpty() && customModelData == -1 && !glowing;
+        return serializedItemStack == null && name == null && lore.isEmpty() && customModelData == -1 && !glowing;
     }
 
     public static @NotNull ItemDefinition of(final @NotNull String material) {
@@ -162,10 +181,31 @@ public final class ItemDefinition {
     }
 
     public static @NotNull ItemDefinition of(final @NotNull String material, final @Nullable String name, final int amount, final @NotNull List<String> lore, final int customModelData, final boolean glowing, @Nullable final String modelId) {
-        return new ItemDefinition(material, name, amount, lore, customModelData, glowing, modelId);
+        return new ItemDefinition(material, name, amount, lore, customModelData, glowing, modelId, null);
+    }
+
+    public static @NotNull ItemDefinition ofItemStack(final @NotNull ItemStack itemStack) {
+        final ItemStack clone = requireNonNull(itemStack, "itemStack").clone();
+        final String serialized = Base64.getEncoder().encodeToString(clone.serializeAsBytes());
+        return new ItemDefinition(clone.getType().name(), null, clone.getAmount(), Collections.emptyList(), -1, false, null, serialized);
+    }
+
+    public static @NotNull ItemDefinition ofSerializedItemStack(final @NotNull String serializedItemStack) {
+        final ItemStack itemStack = deserializeItemStack(serializedItemStack);
+        return new ItemDefinition(itemStack.getType().name(), null, itemStack.getAmount(), Collections.emptyList(), -1, false, null, serializedItemStack);
+    }
+
+    public static @NotNull ItemStack deserializeItemStack(final @NotNull String serializedItemStack) {
+        final byte[] bytes = Base64.getDecoder().decode(serializedItemStack);
+        return ItemStack.deserializeBytes(bytes);
     }
 
     public static @NotNull ItemDefinition deserialize(final @NotNull ConfigurationSection section) throws IllegalArgumentException {
+        final String serializedItemStack = section.getString("serialized-itemstack", null);
+        if (serializedItemStack != null) {
+            return ofSerializedItemStack(serializedItemStack);
+        }
+
         final String material = section.getString("material", null);
         final String name = section.getString("name", null);
         final int amount = section.getInt("amount", 1);

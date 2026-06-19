@@ -1,6 +1,8 @@
 package com.hibiscusmc.hmcrewards.api;
 
 import com.hibiscusmc.hmcrewards.item.ItemMatcher;
+import com.hibiscusmc.hmcrewards.item.ItemDefinition;
+import com.hibiscusmc.hmcrewards.reward.ItemReward;
 import com.hibiscusmc.hmcrewards.reward.ItemRewardProvider;
 import com.hibiscusmc.hmcrewards.reward.Reward;
 import com.hibiscusmc.hmcrewards.reward.RewardProvider;
@@ -10,6 +12,8 @@ import com.hibiscusmc.hmcrewards.user.User;
 import com.hibiscusmc.hmcrewards.user.UserManager;
 import com.hibiscusmc.hmcrewards.user.data.UserDatastore;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,6 +25,8 @@ import java.util.concurrent.CompletableFuture;
 import static java.util.Objects.requireNonNull;
 
 public final class HMCRewardsAPI {
+    private static HMCRewardsAPI instance;
+
     private final UserManager userManager;
     private final RewardProviderRegistry rewardProviderRegistry;
     private final UserDatastore userDatastore;
@@ -34,11 +40,16 @@ public final class HMCRewardsAPI {
             final @NotNull ItemMatcher matcher,
             final @NotNull Plugin plugin
     ) {
+        HMCRewardsAPI.instance = this;
         this.userManager = requireNonNull(userManager, "userManager");
         this.rewardProviderRegistry = requireNonNull(rewardProviderRegistry, "rewardProviderRegistry");
         this.userDatastore = requireNonNull(userDatastore, "userDatastore");
         this.matcher = requireNonNull(matcher, "matcher");
         this.plugin = requireNonNull(plugin, "plugin");
+    }
+
+    public static HMCRewardsAPI getInstance() {
+        return instance;
     }
 
     public @NotNull UserManager userManager() {
@@ -53,7 +64,19 @@ public final class HMCRewardsAPI {
         return matcher;
     }
 
+    /**
+     * @deprecated use {@link #queueRewards(UUID, String, Collection)}.
+     */
+    @Deprecated(forRemoval = false)
     public @NotNull CompletableFuture<Void> giveRewards(
+            final @NotNull UUID uuid,
+            final @NotNull String name,
+            final @NotNull Collection<? extends Reward> rewards
+    ) {
+        return queueRewards(uuid, name, rewards);
+    }
+
+    public @NotNull CompletableFuture<Void> queueRewards(
             final @NotNull UUID uuid,
             final @NotNull String name,
             final @NotNull Collection<? extends Reward> rewards
@@ -76,6 +99,36 @@ public final class HMCRewardsAPI {
         final CompletableFuture<Void> future = new CompletableFuture<>();
         Bukkit.getScheduler().runTask(plugin, () -> queueOnMainThread(uuid, name, additions, future));
         return future;
+    }
+
+    public @NotNull CompletableFuture<Void> queueItemStacks(
+            final @NotNull UUID uuid,
+            final @NotNull String name,
+            final @NotNull Collection<? extends ItemStack> items
+    ) {
+        requireNonNull(uuid, "uuid");
+        requireNonNull(name, "name");
+        requireNonNull(items, "items");
+
+        final ArrayList<ItemReward> rewards = new ArrayList<>(items.size());
+        try {
+            for (final ItemStack item : items) {
+                requireNonNull(item, "item");
+                rewards.add(new ItemReward(null, ItemDefinition.ofItemStack(item)));
+            }
+        } catch (final RuntimeException exception) {
+            return CompletableFuture.failedFuture(exception);
+        }
+
+        return queueRewards(uuid, name, rewards);
+    }
+
+    public @NotNull CompletableFuture<Void> queueItemStacks(
+            final @NotNull Player player,
+            final @NotNull Collection<? extends ItemStack> items
+    ) {
+        requireNonNull(player, "player");
+        return queueItemStacks(player.getUniqueId(), player.getName(), items);
     }
 
     private void queueOnMainThread(

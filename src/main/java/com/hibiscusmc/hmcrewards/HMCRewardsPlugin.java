@@ -1,6 +1,7 @@
 package com.hibiscusmc.hmcrewards;
 
 import com.hibiscusmc.hmcrewards.api.APIModule;
+import com.hibiscusmc.hmcrewards.api.HMCRewardsAPI;
 import com.hibiscusmc.hmcrewards.command.CommandModule;
 import com.hibiscusmc.hmcrewards.feedback.FeedbackModule;
 import com.hibiscusmc.hmcrewards.hook.HookModule;
@@ -32,6 +33,7 @@ public final class HMCRewardsPlugin extends HibiscusPlugin implements Module {
 
     @Inject private Set<Service> services;
     @Inject private Set<Listener> listeners;
+    @Inject private HMCRewardsAPI api;
 
     private final Collection<AutoCloseable> resources = new HashSet<>();
 
