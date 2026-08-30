@@ -1,8 +1,8 @@
 package com.hibiscusmc.hmcrewards.command.arg;
 
 import com.hibiscusmc.hmcrewards.reward.RewardProvider;
-import me.fixeddev.commandflow.annotated.part.AbstractModule;
-import me.fixeddev.commandflow.annotated.part.Key;
+import team.unnamed.commandflow.annotated.part.AbstractModule;
+import team.unnamed.commandflow.annotated.part.Key;
 import team.unnamed.inject.Inject;
 
 public final class HMCRewardsCommandModule extends AbstractModule {

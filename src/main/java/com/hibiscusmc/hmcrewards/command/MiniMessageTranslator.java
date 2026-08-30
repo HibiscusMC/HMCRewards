@@ -1,10 +1,9 @@
 package com.hibiscusmc.hmcrewards.command;
 
-import me.fixeddev.commandflow.Namespace;
-import me.fixeddev.commandflow.translator.TranslationProvider;
-import me.fixeddev.commandflow.translator.Translator;
+import team.unnamed.commandflow.Namespace;
+import team.unnamed.commandflow.translator.TranslationProvider;
+import team.unnamed.commandflow.translator.Translator;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.TranslatableComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.Tag;
@@ -94,7 +93,7 @@ public final class MiniMessageTranslator implements Translator {
     }
 
     @Override
-    public void setConverterFunction(final @NotNull Function<String, TextComponent> stringToComponent) {
+    public void setConverterFunction(final @NotNull Function<String, Component> stringToComponent) {
         throw new UnsupportedOperationException("This translator does not support specifying a converter function!");
     }
 

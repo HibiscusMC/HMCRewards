@@ -91,7 +91,7 @@ public final class ItemDefinition {
         ItemBuilder builder = new ItemBuilder(item);
         // set amount
         if (amount != 1) {
-            builder.setQuantity(amount);
+            builder.quantity(amount);
         }
 
         // set display name

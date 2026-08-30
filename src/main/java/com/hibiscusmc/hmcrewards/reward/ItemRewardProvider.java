@@ -8,7 +8,7 @@ import com.hibiscusmc.hmcrewards.item.ItemDefinition;
 import com.hibiscusmc.hmcrewards.item.ItemMatcher;
 import com.nexomc.nexo.api.NexoItems;
 import io.tofpu.vouchers.Vouchers;
-import me.fixeddev.commandflow.exception.CommandUsage;
+import team.unnamed.commandflow.exception.CommandUsage;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;

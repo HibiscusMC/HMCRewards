@@ -2,12 +2,12 @@ package com.hibiscusmc.hmcrewards.command.arg;
 
 import com.hibiscusmc.hmcrewards.reward.RewardProvider;
 import com.hibiscusmc.hmcrewards.reward.RewardProviderRegistry;
-import me.fixeddev.commandflow.CommandContext;
-import me.fixeddev.commandflow.annotated.part.PartFactory;
-import me.fixeddev.commandflow.exception.ArgumentParseException;
-import me.fixeddev.commandflow.part.ArgumentPart;
-import me.fixeddev.commandflow.part.CommandPart;
-import me.fixeddev.commandflow.stack.ArgumentStack;
+import team.unnamed.commandflow.CommandContext;
+import team.unnamed.commandflow.annotated.part.PartFactory;
+import team.unnamed.commandflow.exception.ArgumentParseException;
+import team.unnamed.commandflow.part.ArgumentPart;
+import team.unnamed.commandflow.stack.ArgumentStack;
+import team.unnamed.commandflow.part.CommandPart;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.inject.Inject;
 

@@ -3,14 +3,13 @@ package com.hibiscusmc.hmcrewards.command;
 import com.hibiscusmc.hmcrewards.command.arg.HMCRewardsCommandModule;
 import com.hibiscusmc.hmcrewards.feedback.TranslationManager;
 import com.hibiscusmc.hmcrewards.util.Service;
-import me.fixeddev.commandflow.CommandManager;
-import me.fixeddev.commandflow.annotated.AnnotatedCommandTreeBuilder;
-import me.fixeddev.commandflow.annotated.CommandClass;
-import me.fixeddev.commandflow.annotated.builder.AnnotatedCommandBuilderImpl;
-import me.fixeddev.commandflow.annotated.part.PartInjector;
-import me.fixeddev.commandflow.annotated.part.defaults.DefaultsModule;
-import me.fixeddev.commandflow.bukkit.BukkitCommandManager;
-import me.fixeddev.commandflow.bukkit.factory.BukkitModule;
+import team.unnamed.commandflow.CommandManager;
+import team.unnamed.commandflow.annotated.AnnotatedCommandTreeBuilder;
+import team.unnamed.commandflow.annotated.CommandClass;
+import team.unnamed.commandflow.annotated.part.PartInjector;
+import team.unnamed.commandflow.annotated.part.defaults.DefaultsModule;
+import team.unnamed.commandflow.bukkit.BukkitMapCommandManager;
+import team.unnamed.commandflow.bukkit.factory.BukkitModule;
 import org.bukkit.plugin.Plugin;
 import team.unnamed.inject.Inject;
 import team.unnamed.inject.Injector;
@@ -26,7 +25,7 @@ public final class CommandService implements Service {
 
     @Override
     public void start() {
-        final CommandManager manager = new BukkitCommandManager(plugin.getName());
+        final CommandManager manager = new BukkitMapCommandManager(plugin);
         manager.setTranslator(MiniMessageTranslator.miniMessage((namespace, key, resolvers) -> {
             // convert from kebab-case to snake_case and add the command prefix
             key = key.replace('-', '_');
@@ -42,7 +41,7 @@ public final class CommandService implements Service {
         partInjector.install(commandModule);
 
         final AnnotatedCommandTreeBuilder builder = AnnotatedCommandTreeBuilder.create(
-                new AnnotatedCommandBuilderImpl(partInjector),
+                partInjector,
                 (clazz, parent) -> injector.getInstance(clazz)
         );
 

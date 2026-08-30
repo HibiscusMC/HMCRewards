@@ -1,6 +1,6 @@
 package com.hibiscusmc.hmcrewards.util;
 
-import me.fixeddev.commandflow.annotated.CommandClass;
+import team.unnamed.commandflow.annotated.CommandClass;
 import org.bukkit.event.Listener;
 import team.unnamed.inject.AbstractModule;
 import team.unnamed.inject.Binder;

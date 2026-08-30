@@ -1,7 +1,7 @@
 plugins {
     java
     id("xyz.jpenilla.run-paper") version "2.3.1"
-    id("com.gradleup.shadow") version "9.0.0-beta4"
+    id("com.gradleup.shadow") version "9.4.3"
     id("maven-publish")
 }
 
@@ -12,8 +12,8 @@ repositories {
     maven("https://repo.papermc.io/repository/maven-public/") // paper-api, paperlib
     maven("https://repo.oraxen.com/releases") // Oraxen
     maven("https://repo.nexomc.com/releases") // Nexo
-    maven("https://repo.unnamed.team/repository/unnamed-public/") // command-flow
     maven("https://repo.hibiscusmc.com/releases/") // HibiscusCommons
+    maven("https://repo.unnamed.team/repository/unnamed-public/") // command-flow
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") // PlaceholderAPI
     maven("https://s01.oss.sonatype.org/content/repositories/snapshots/") // adventure-platform-bukkit
 }
@@ -24,7 +24,7 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20.6-R0.1-SNAPSHOT")
     compileOnly("io.th0rgal:oraxen:1.164.0") // Oraxen
     compileOnly("com.nexomc:nexo:1.0.0") // Nexo
-    compileOnly("me.lojosho:HibiscusCommons:0.8.3-a89bcec3") // HibiscusCommons
+    compileOnly("me.lojosho:HibiscusCommons:0.9.3") // HibiscusCommons
     compileOnly("me.clip:placeholderapi:2.11.6") // PlaceholderAPI
     compileOnly("com.mojang:datafixerupper:6.0.8") // datafixerupper
 
@@ -39,8 +39,11 @@ dependencies {
 
     implementation("org.mongodb:mongodb-driver-sync:4.11.1") // mongodb driver
 
-    implementation("me.fixeddev:commandflow-universal:0.6.0")
-    implementation("me.fixeddev:commandflow-bukkit:0.6.0")
+    implementation(files(
+        "libs/commandflow-api-0.8.0.jar",
+        "libs/commandflow-bukkit-common-0.8.0.jar",
+        "libs/commandflow-bukkit-commandmap-0.8.0.jar"
+    ))
 
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
@@ -48,7 +51,7 @@ dependencies {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(21))
+        languageVersion.set(JavaLanguageVersion.of(25))
     }
 }
 
@@ -80,12 +83,15 @@ tasks {
         }
     }
     compileJava {
-        options.release = 21
+        options.release = 25
     }
     shadowJar {
         val pkg = "com.hibiscusmc.hmcrewards.lib"
+        manifest {
+            attributes("paperweight-mappings-namespace" to "mojang")
+        }
         relocate("team.unnamed.inject", "$pkg.inject")
-        relocate("me.fixeddev.commandflow", "$pkg.commandflow")
+        relocate("team.unnamed.commandflow", "$pkg.commandflow")
         relocate("dev.triumphteam.gui", "$pkg.triumphgui")
         relocate("com.mongodb", "$pkg.mongodb")
         relocate("org.bson", "$pkg.bson")
