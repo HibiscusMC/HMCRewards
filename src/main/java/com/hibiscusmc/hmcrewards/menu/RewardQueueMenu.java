@@ -119,7 +119,7 @@ public final class RewardQueueMenu {
         int currentIndex = 0;
         for (final Reward reward : pageRewards) {
             final int rewardOriginalIndex = currentIndex;
-            final ItemStack icon = reward.icon().build(itemMatcher);
+            final ItemStack icon = reward.icon().build(itemMatcher, player);
             final GuiItem button = ItemBuilder.from(icon)
                     .asGuiItem(event -> {
                         event.setCancelled(true);
@@ -204,7 +204,7 @@ public final class RewardQueueMenu {
                 final var playerCommands = iconSection.getStringList("player-commands");
                 final var consoleCommands = iconSection.getStringList("console-commands");
 
-                final ItemStack icon = ItemDefinition.deserialize(iconSection).build(itemMatcher);
+                final ItemStack icon = ItemDefinition.deserialize(iconSection).build(itemMatcher, player);
                 var action = switch (key.toLowerCase()) {
                     case "bulk-claim" -> (GuiAction<InventoryClickEvent>) (event -> {
                         final List<Reward> currentRewards = user.rewards();

@@ -23,7 +23,7 @@ dependencies {
 
     compileOnly("io.papermc.paper:paper-api:1.20.6-R0.1-SNAPSHOT")
     compileOnly("io.th0rgal:oraxen:1.164.0") // Oraxen
-    compileOnly("com.nexomc:nexo:1.0.0") // Nexo
+    compileOnly("com.nexomc:nexo:1.25.0") // Nexo
     compileOnly("me.lojosho:HibiscusCommons:0.9.3") // HibiscusCommons
     compileOnly("me.clip:placeholderapi:2.11.6") // PlaceholderAPI
     compileOnly("com.mojang:datafixerupper:6.0.8") // datafixerupper

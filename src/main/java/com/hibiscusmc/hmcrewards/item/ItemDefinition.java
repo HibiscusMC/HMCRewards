@@ -7,6 +7,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -78,6 +79,14 @@ public final class ItemDefinition {
     }
 
     public @NotNull ItemStack build(final @NotNull ItemMatcher itemMatcher) {
+        return buildInternal(itemMatcher, null);
+    }
+
+    public @NotNull ItemStack build(final @NotNull ItemMatcher itemMatcher, final @NotNull Player viewer) {
+        return buildInternal(itemMatcher, viewer);
+    }
+
+    private @NotNull ItemStack buildInternal(final @NotNull ItemMatcher itemMatcher, final @Nullable Player viewer) {
         if (serializedItemStack != null) {
             return deserializeItemStack(serializedItemStack);
         }
@@ -96,7 +105,7 @@ public final class ItemDefinition {
 
         // set display name
         if (name != null) {
-            builder.setDisplayName(GlobalMiniMessage.deserializeForItem(name));
+            builder.setDisplayName(viewer == null ? GlobalMiniMessage.deserializeForItem(name) : GlobalMiniMessage.deserializeForMenuItem(viewer, name));
         }
 
         if (customModelData > 0) {
@@ -117,7 +126,7 @@ public final class ItemDefinition {
         if (!lore.isEmpty()) {
             final List<Component> displayLore = new ArrayList<>(lore.size());
             for (final String line : lore) {
-                displayLore.add(GlobalMiniMessage.deserializeForItem(line));
+                displayLore.add(viewer == null ? GlobalMiniMessage.deserializeForItem(line) : GlobalMiniMessage.deserializeForMenuItem(viewer, line));
             }
             built.editMeta(meta -> meta.lore(displayLore));
         }
