@@ -3,6 +3,8 @@ package com.hibiscusmc.hmcrewards.api;
 import com.hibiscusmc.hmcrewards.item.ItemMatcher;
 import com.hibiscusmc.hmcrewards.item.ItemDefinition;
 import com.hibiscusmc.hmcrewards.reward.ItemReward;
+import com.hibiscusmc.hmcrewards.reward.CommandReward;
+import com.hibiscusmc.hmcrewards.reward.CommandRewardProvider;
 import com.hibiscusmc.hmcrewards.reward.ItemRewardProvider;
 import com.hibiscusmc.hmcrewards.reward.Reward;
 import com.hibiscusmc.hmcrewards.reward.RewardProvider;
@@ -19,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -123,6 +126,17 @@ public final class HMCRewardsAPI {
         return queueRewards(uuid, name, rewards);
     }
 
+    public @NotNull CompletableFuture<Void> queueCommandRewards(
+            final @NotNull UUID uuid,
+            final @NotNull String name,
+            final @NotNull ItemStack icon,
+            final @NotNull Collection<String> commands
+    ) {
+        requireNonNull(icon, "icon");
+        requireNonNull(commands, "commands");
+        return queueRewards(uuid, name, List.of(CommandReward.dynamic(icon, commands)));
+    }
+
     public @NotNull CompletableFuture<Void> queueItemStacks(
             final @NotNull Player player,
             final @NotNull Collection<? extends ItemStack> items
@@ -199,7 +213,8 @@ public final class HMCRewardsAPI {
             return;
         }
 
-        if (provider instanceof ItemRewardProvider itemRewardProvider && itemRewardProvider.type().isInstance(reward)) {
+        if ((provider instanceof ItemRewardProvider itemRewardProvider && itemRewardProvider.type().isInstance(reward))
+                || (provider instanceof CommandRewardProvider commandRewardProvider && commandRewardProvider.type().isInstance(reward))) {
             return;
         }
 

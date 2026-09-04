@@ -81,6 +81,10 @@ public final class CommandRewardProvider implements RewardProvider<CommandReward
 
     @Override
     public @NotNull List<CommandReward> fromReference(final @NotNull String string) throws IllegalArgumentException {
+        CommandReward dynamic = CommandReward.dynamic(string);
+        if (dynamic != null) {
+            return List.of(dynamic);
+        }
         final ConfigurationSection section = config.getConfigurationSection("rewards." + string);
         if (section == null) {
             return List.of();
